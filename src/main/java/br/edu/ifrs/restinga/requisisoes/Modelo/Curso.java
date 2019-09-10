@@ -6,6 +6,8 @@
 package br.edu.ifrs.restinga.requisisoes.Modelo;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
@@ -16,6 +18,7 @@ import javax.persistence.Id;
 public class Curso {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID;
     private String nome;
 
@@ -26,7 +29,6 @@ public class Curso {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
 
     public Long getID() {
         return ID;
@@ -35,5 +37,5 @@ public class Curso {
     public void setID(Long ID) {
         this.ID = ID;
     }
-    
+
 }

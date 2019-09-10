@@ -7,6 +7,8 @@ package br.edu.ifrs.restinga.requisisoes.Modelo;
 
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 /**
@@ -17,6 +19,7 @@ import javax.persistence.Id;
 public class Requisicao {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID;
     private Date data;
     private String professor;
@@ -54,9 +57,6 @@ public class Requisicao {
     public void setDeferido(boolean deferido) {
         this.deferido = deferido;
     }
-    
-    
-    
 
     public Long getID() {
         return ID;
@@ -65,5 +65,5 @@ public class Requisicao {
     public void setID(Long ID) {
         this.ID = ID;
     }
-    
+
 }
