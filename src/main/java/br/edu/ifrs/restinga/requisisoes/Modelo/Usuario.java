@@ -6,16 +6,37 @@
 package br.edu.ifrs.restinga.requisisoes.Modelo;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 /**
  *
  * @author jader
  */
 @Entity
-public class Usuario {
+@Inheritance(strategy = InheritanceType.JOINED)
+//Configurando herança
+@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
+include=JsonTypeInfo.As.EXISTING_PROPERTY, property="tipo")
+//define o tipo raiz
+@JsonTypeName("usuario")
+//tem que definir as subclasses conhecidas
+@JsonSubTypes({
+@JsonSubTypes.Type(name="aluno", value=Aluno.class),
+@JsonSubTypes.Type(name="servidor", value= Servidor.class)})
+public abstract class Usuario {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ID;
     private String nome;
     private String login;
@@ -24,6 +45,10 @@ public class Usuario {
     private String permissoes;
     private boolean ativo;
 
+    @JsonProperty("tipo")
+    @Transient
+    private final String tipo = "usuario";
+    
     public String getNome() {
         return nome;
     }
