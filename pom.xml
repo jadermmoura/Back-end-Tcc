@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.edu.ifrs.restinga</groupId>
-	<artifactId>requisisoes</artifactId>
+	<artifactId>requisicoes</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>requisisoes</name>
+	<name>requisicoes</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
