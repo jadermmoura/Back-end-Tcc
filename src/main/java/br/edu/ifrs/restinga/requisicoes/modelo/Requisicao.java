@@ -16,7 +16,7 @@ public class Requisicao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ID;
+    private Long id;
     private Date data;
     private String professor;
     private String parecer;
@@ -55,11 +55,11 @@ public class Requisicao {
     }
 
     public Long getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    public void setID(Long id) {
+        this.id = id;
     }
 
 }

@@ -11,5 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AlunoDAO extends CrudRepository<Aluno, Integer> {
-    
+
+    public Iterable<Aluno> findByNome(String nome);
+
 }

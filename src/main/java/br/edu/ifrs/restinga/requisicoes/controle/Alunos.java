@@ -5,11 +5,47 @@
  */
 package br.edu.ifrs.restinga.requisicoes.controle;
 
+import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
+import br.edu.ifrs.restinga.requisicoes.modelo.Aluno;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  *
  * @author Jim
- *   teste    
  */
+
+@RestController
+@RequestMapping(path = "/api/alunos")
 public class Alunos {
+    
+    @Autowired
+    AlunoDAO alunoDAO;
+    
+    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Aluno> listar() {
+        return alunoDAO.findAll();
+
+    }
+    
+    @RequestMapping(path = "/", method = RequestMethod.POST)
+    public Aluno inserir(@RequestBody Aluno aluno) {
+        return alunoDAO.save(aluno);
+
+    }
+    
+    @RequestMapping(path = "/nome/{nome}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Aluno> buscarPeloNome(@PathVariable("nome") String nome) {
+        return alunoDAO.findByNome(nome);
+    }
+
     
 }
