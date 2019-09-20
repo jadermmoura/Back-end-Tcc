@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author Jim
+ * @author jader
  */
 @RestController
 @RequestMapping(path = "/api/cursos")

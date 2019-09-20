@@ -6,6 +6,7 @@
 package br.edu.ifrs.restinga.requisicoes.dao;
 
 import br.edu.ifrs.restinga.requisicoes.modelo.Aluno;
+import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface AlunoDAO extends CrudRepository<Aluno, Integer> {
 
     public Iterable<Aluno> findByNome(String nome);
+
+    public Optional<Aluno> findAllByMatricula(int matricula);
 
 }
