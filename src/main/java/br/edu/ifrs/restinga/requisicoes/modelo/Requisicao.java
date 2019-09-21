@@ -6,12 +6,19 @@
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
 import java.util.Date;
+import java.util.List;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo")
 public class Requisicao {
 
     @Id
@@ -21,6 +28,9 @@ public class Requisicao {
     private String professor;
     private String parecer;
     private boolean deferido;
+
+    @ManyToMany
+    private List<Usuario> usuarios;
 
     public Date getData() {
         return data;
