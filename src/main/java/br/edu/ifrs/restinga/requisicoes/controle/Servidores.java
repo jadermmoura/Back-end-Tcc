@@ -5,10 +5,15 @@
  */
 package br.edu.ifrs.restinga.requisicoes.controle;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 /**
  *
- * @author Jim
+ * @author jader
  */
+@RestController
+@RequestMapping(path = "/api/servidores")
 public class Servidores {
     
 }
