@@ -6,21 +6,31 @@
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
 import java.util.Date;
+import java.util.List;
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.ManyToMany;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo")
 public class Requisicao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ID;
+    private Long id;
     private Date data;
     private String professor;
     private String parecer;
     private boolean deferido;
+
+    @ManyToMany
+    private List<Usuario> usuarios;
 
     public Date getData() {
         return data;
@@ -55,11 +65,11 @@ public class Requisicao {
     }
 
     public Long getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    public void setID(Long id) {
+        this.id = id;
     }
 
 }

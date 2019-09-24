@@ -17,23 +17,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.util.List;
+import javax.persistence.ManyToMany;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 //Configurando herança
-@JsonTypeInfo(use=JsonTypeInfo.Id.NAME,
-include=JsonTypeInfo.As.EXISTING_PROPERTY, property="tipo")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo")
 //define o tipo raiz
 @JsonTypeName("usuario")
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
-@JsonSubTypes.Type(name="aluno", value=Aluno.class),
-@JsonSubTypes.Type(name="servidor", value= Servidor.class)})
+    @JsonSubTypes.Type(name = "aluno", value = Aluno.class)
+    ,
+@JsonSubTypes.Type(name = "servidor", value = Servidor.class)})
 public abstract class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ID;
+    private Long id;
     private String nome;
     private String login;
     private String senha;
@@ -44,7 +47,10 @@ public abstract class Usuario {
     @JsonProperty("tipo")
     @Transient
     private final String tipo = "usuario";
-    
+
+    @ManyToMany
+    private List<Requisicao> requisicoes;
+
     public String getNome() {
         return nome;
     }
@@ -92,13 +98,13 @@ public abstract class Usuario {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
-    
+
     public Long getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    public void setID(Long id) {
+        this.id = id;
     }
-    
+
 }
