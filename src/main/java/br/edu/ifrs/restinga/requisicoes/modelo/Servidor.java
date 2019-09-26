@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Servidor extends Usuario{
 	private int siape; 
 	private String cargo; 
-	private boolean coordenador;
 	
 	@Transient
 	 // Define o campo
@@ -29,11 +28,5 @@ public class Servidor extends Usuario{
 	public void setCargo(String cargo) {
 		this.cargo = cargo;
 	}
-	public boolean isCoordenador() {
-		return coordenador;
-	}
-	public void setCoordenador(boolean coordenador) {
-		this.coordenador = coordenador;
-	} 
 	
 }

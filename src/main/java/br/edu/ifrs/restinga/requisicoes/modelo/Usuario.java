@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
 import javax.persistence.Entity;
@@ -29,9 +24,9 @@ import javax.persistence.ManyToMany;
 @JsonTypeName("usuario")
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
-    @JsonSubTypes.Type(name = "aluno", value = Aluno.class)
-    ,
-@JsonSubTypes.Type(name = "servidor", value = Servidor.class)})
+    @JsonSubTypes.Type(name = "aluno", value = Aluno.class),
+    @JsonSubTypes.Type(name = "servidor", value = Servidor.class),
+        @JsonSubTypes.Type(name = "professor", value = Professor.class)})
 public abstract class Usuario {
 
     @Id
