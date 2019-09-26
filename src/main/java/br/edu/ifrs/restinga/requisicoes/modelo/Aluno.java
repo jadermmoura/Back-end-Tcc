@@ -6,14 +6,19 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Aluno extends Usuario{
 
+    
 	@Transient
 	 // Define o campo
 	 @JsonProperty("tipo")
 	private final String tipo = "aluno";
+
+   
 	
 	private int matricula; 
 	private Date dataIngresso;

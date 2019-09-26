@@ -4,6 +4,7 @@ package br.edu.ifrs.restinga.requisicoes.modelo;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
@@ -12,7 +13,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -25,23 +29,20 @@ import javax.persistence.ManyToMany;
 @JsonSubTypes({
     @JsonSubTypes.Type(name = "aproveitamento", value = RequisicaoAproveitamento.class),
         @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
-public class Requisicao {
+public abstract class Requisicao implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Temporal(javax.persistence.TemporalType.DATE)
     private Date data;
     private String parecer;
     private boolean deferido;
     private byte[] anexos;
-
-    @ManyToMany
-    private List<Usuario> usuarios;
-
-    @ManyToMany
+    @OneToMany
     private List<Disciplina> disciplinaSolicitada;
 
-    public Long getId() {
+       public Long getId() {
         return id;
     }
 
@@ -81,13 +82,7 @@ public class Requisicao {
         this.anexos = anexos;
     }
 
-    public List<Usuario> getUsuarios() {
-        return usuarios;
-    }
 
-    public void setUsuarios(List<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
 
     public List<Disciplina> getDisciplinaSolicitada() {
         return disciplinaSolicitada;

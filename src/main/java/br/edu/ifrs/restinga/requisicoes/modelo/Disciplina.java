@@ -1,29 +1,41 @@
 
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
-import java.util.List;
+import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 
 @Entity
-public class Disciplina {
+public class Disciplina implements Serializable {
 
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String nome;
     private int cargaHoraria;
-    
-    @ManyToMany
-    private List<Requisicao> requisicoes;
+    private boolean ativo; 
 
-    public int getId() {
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
+    
+    
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
+    
+   
+   
 
     public String getNome() {
         return nome;
@@ -41,14 +53,7 @@ public class Disciplina {
         this.cargaHoraria = cargaHoraria;
     }
 
-    public List<Requisicao> getRequisicoes() {
-        return requisicoes;
-    }
-
-    public void setRequisicoes(List<Requisicao> requisicoes) {
-        this.requisicoes = requisicoes;
-    }
-
+  
     
     
 }
