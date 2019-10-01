@@ -17,13 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author jader
- */
+
 @RestController
 @RequestMapping(path = "/api/cursos")
-public class Cursos {
+public class CursosControle {
 
     @Autowired
     CursoDAO cursoDAO;
@@ -34,15 +31,15 @@ public class Cursos {
         return cursoDAO.findAll();
     }
 
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public Curso pesquisarPeloId(@PathVariable long id) {
-        Optional<Curso> cursoId = cursoDAO.findAllById(id);
-        if (cursoId.isPresent()) {
-            return cursoId.get();
-        } else {
-            throw new NaoEncontrado("Id não encontrado");
-        }
-    }
+//    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+//    @ResponseStatus(HttpStatus.OK)
+//    public Curso pesquisarPeloId(@PathVariable long id) {
+//        Optional<Curso> cursoId = cursoDAO.findAllById(id);
+//        if (cursoId.isPresent()) {
+//            return cursoId.get();
+//        } else {
+//            throw new NaoEncontrado("Id não encontrado");
+//        }
+//    }
     
 }

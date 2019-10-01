@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path = "/api/alunos")
-public class Alunos {
+public class AlunosControle {
 
     @Autowired
     AlunoDAO alunoDAO;
@@ -38,22 +38,22 @@ public class Alunos {
 
     }
 
-    @RequestMapping(path = "/{matricula}", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public Aluno pesquisarPeloMatricula(@PathVariable int matricula) {
-        Optional<Aluno> matriculaAluno = alunoDAO.findAllByMatricula(matricula);
-        if (matriculaAluno.isPresent()) {
-            return matriculaAluno.get();
-        } else {
-            throw new NaoEncontrado("Matricula não encontrado");
-        }
-    }
-
-    @RequestMapping(path = "/nome/{nome}", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public Iterable<Aluno> buscarPeloNome(@PathVariable("nome") String nome) {
-        return alunoDAO.findByNome(nome);
-    }
+//    @RequestMapping(path = "/{matricula}", method = RequestMethod.GET)
+//    @ResponseStatus(HttpStatus.OK)
+//    public Aluno pesquisarPeloMatricula(@PathVariable int matricula) {
+//        Optional<Aluno> matriculaAluno = alunoDAO.findAllByMatricula(matricula);
+//        if (matriculaAluno.isPresent()) {
+//            return matriculaAluno.get();
+//        } else {
+//            throw new NaoEncontrado("Matricula não encontrado");
+//        }
+//    }
+//
+//    @RequestMapping(path = "/nome/{nome}", method = RequestMethod.GET)
+//    @ResponseStatus(HttpStatus.OK)
+//    public Iterable<Aluno> buscarPeloNome(@PathVariable("nome") String nome) {
+//        return alunoDAO.findByNome(nome);
+//    }
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
@@ -65,16 +65,16 @@ public class Alunos {
         }
     }
 
-    @RequestMapping(path = "/editar/{matricula}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public Aluno editar(@PathVariable int matricula, @RequestBody Aluno alunoNovo) {
-        alunoNovo.setMatricula(0);
-        Aluno alunoAntigo = this.pesquisarPeloMatricula(matricula);
-        alunoAntigo.setEmail(alunoNovo.getEmail());
-        alunoAntigo.setDataIngresso(alunoNovo.getDataIngresso());
-        alunoAntigo.setNome(alunoNovo.getNome());
-        return alunoDAO.save(alunoAntigo);
-
-    }
+//    @RequestMapping(path = "/editar/{matricula}", method = RequestMethod.PUT)
+//    @ResponseStatus(HttpStatus.OK)
+//    public Aluno editar(@PathVariable int matricula, @RequestBody Aluno alunoNovo) {
+//        alunoNovo.setMatricula(0);
+//        //Aluno alunoAntigo = this.pesquisarPeloMatricula(matricula);
+//        alunoAntigo.setEmail(alunoNovo.getEmail());
+//        alunoAntigo.setDataIngresso(alunoNovo.getDataIngresso());
+//        alunoAntigo.setNome(alunoNovo.getNome());
+//        return alunoDAO.save(alunoAntigo);
+//
+//    }
 
 }
