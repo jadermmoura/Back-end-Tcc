@@ -29,9 +29,8 @@ import javax.persistence.ManyToMany;
 @JsonTypeName("usuario")
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
-    @JsonSubTypes.Type(name = "aluno", value = Aluno.class)
-    ,
-@JsonSubTypes.Type(name = "servidor", value = Servidor.class)})
+    @JsonSubTypes.Type(name = "aluno", value = Aluno.class),
+    @JsonSubTypes.Type(name = "servidor", value = Servidor.class)})
 public abstract class Usuario {
 
     @Id

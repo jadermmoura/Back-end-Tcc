@@ -57,7 +57,7 @@ public class AlunosControle {
 
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void apagar(@PathVariable int id) {
+    public void apagar(@PathVariable Long id) {
         if (alunoDAO.existsById(id)) {
             alunoDAO.deleteById(id);
         } else {

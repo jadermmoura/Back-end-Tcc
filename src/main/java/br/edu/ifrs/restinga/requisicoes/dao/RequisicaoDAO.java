@@ -7,10 +7,9 @@ package br.edu.ifrs.restinga.requisicoes.dao;
 
 import br.edu.ifrs.restinga.requisicoes.modelo.Requisicao;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RequisicaoDAO extends JpaRepository<Requisicao, Integer> {
+public interface RequisicaoDAO extends JpaRepository<Requisicao, Long> {
     
 }
