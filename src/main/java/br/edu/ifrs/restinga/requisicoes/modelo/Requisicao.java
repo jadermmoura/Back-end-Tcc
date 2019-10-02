@@ -8,14 +8,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -44,8 +43,8 @@ public abstract class Requisicao implements Serializable {
     private String parecer;
     private boolean deferido;
     private byte[] anexos;
-    @OneToMany
-    private List<Disciplina> disciplinaSolicitada;
+    @ManyToOne
+    private Disciplina disciplinaSolicitada;
 
     public Long getId() {
         return id;
@@ -83,14 +82,16 @@ public abstract class Requisicao implements Serializable {
     public void setAnexos(byte[] anexos) {
         this.anexos = anexos;
     }
-    
-    public List<Disciplina> getDisciplinaSolicitada() {
+
+    public Disciplina getDisciplinaSolicitada() {
         return disciplinaSolicitada;
     }
 
-    public void setDisciplinaSolicitada(List<Disciplina> disciplinaSolicitada) {
+    public void setDisciplinaSolicitada(Disciplina disciplinaSolicitada) {
         this.disciplinaSolicitada = disciplinaSolicitada;
     }
+    
+ 
 
 
 
