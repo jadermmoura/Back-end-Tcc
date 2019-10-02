@@ -25,8 +25,22 @@ public class Curso {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disciplina> disciplinas;
 
-     @ManyToMany
-    private List<Requisicao> requisicoes;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Disciplina> getDisciplinas() {
+        return disciplinas;
+    }
+
+    public void setDisciplinas(List<Disciplina> disciplinas) {
+        this.disciplinas = disciplinas;
+    }
+    
     
     public String getNome() {
         return nome;

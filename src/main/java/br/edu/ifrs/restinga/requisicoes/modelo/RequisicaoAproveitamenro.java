@@ -5,14 +5,16 @@
  */
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
-/**
- *
- * @author jader
- */
+
 @Entity
 public class RequisicaoAproveitamenro extends Requisicao{
+    @Transient
+    @JsonProperty("tipo")
+    private final String tipo ="aproveitamento";
     
     private  String disciplinasCursadasAnterior;
     private  String analiseProfessor;
