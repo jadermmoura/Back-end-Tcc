@@ -90,9 +90,5 @@ public abstract class Requisicao implements Serializable {
     public void setDisciplinaSolicitada(Disciplina disciplinaSolicitada) {
         this.disciplinaSolicitada = disciplinaSolicitada;
     }
-    
- 
-
-
-
+  
 }

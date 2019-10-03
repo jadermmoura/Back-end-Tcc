@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.ManyToMany;
 
@@ -31,7 +32,7 @@ import javax.persistence.ManyToMany;
 @JsonSubTypes({
     @JsonSubTypes.Type(name = "aluno", value = Aluno.class),
     @JsonSubTypes.Type(name = "servidor", value = Servidor.class)})
-public abstract class Usuario {
+public abstract class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
