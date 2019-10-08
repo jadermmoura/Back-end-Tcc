@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
+import java.sql.Blob;
 import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,6 +22,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 //Configurando herança
@@ -29,12 +34,16 @@ import javax.persistence.Transient;
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
     @JsonSubTypes.Type(name = "aproveitamento", value = RequisicaoAproveitamenro.class),
-        @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
+    @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
 public abstract class Requisicao implements Serializable {
-    @Transient
-    @JsonProperty("tipo")
-    private final String tipo ="requisicao";
-    @Id
+    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@JsonProperty("tipo")
+    private String tipo ="requisicao";
+    @Id	
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonFormat(pattern = "dd/MM/yyyy")
@@ -42,11 +51,18 @@ public abstract class Requisicao implements Serializable {
     private Date dataRequisicao;
     private String parecer;
     private boolean deferido;
-    private byte[] anexos;
+    @Column(columnDefinition="LONGTEXT")
+    private String anexos;
     @ManyToOne
     private Disciplina disciplinaSolicitada;
 
-    public Long getId() {
+    
+    
+    public String getAnexos() {
+		return anexos;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -64,7 +80,7 @@ public abstract class Requisicao implements Serializable {
  
 
     public String getParecer() {
-        return parecer;
+        return parecer;	
     }
 
     public void setParecer(String parecer) {
@@ -79,7 +95,7 @@ public abstract class Requisicao implements Serializable {
         this.deferido = deferido;
     }
 
-    public void setAnexos(byte[] anexos) {
+    public void setAnexos(String anexos) {
         this.anexos = anexos;
     }
 

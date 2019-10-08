@@ -11,9 +11,18 @@ import javax.persistence.Transient;
 
 @Entity
 public class RequisicaoCertificacao extends Requisicao{
-    @Transient
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+
+	@Transient
     @JsonProperty("tipo")
     private final String tipo ="certificacao";
+    
+
     
     private String formacaoAtividadeAnterior;
     private String criterioAvaliacao;
