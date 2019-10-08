@@ -5,8 +5,11 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 @Entity
-public class Professor extends Usuario{
+public class Professor extends Usuario implements Serializable{
+
 
 	@Transient
 	 // Define o campo

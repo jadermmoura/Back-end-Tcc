@@ -1,12 +1,21 @@
 
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
+
 import java.util.Date;
 import java.util.List;
+
+import java.sql.Blob;
+import java.util.Date;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,9 +23,13 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -28,21 +41,36 @@ import javax.persistence.Temporal;
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
     @JsonSubTypes.Type(name = "aproveitamento", value = RequisicaoAproveitamento.class),
-        @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
+    @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
 public abstract class Requisicao implements Serializable {
-
-    @Id
+    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	@JsonProperty("tipo")
+    private String tipo ="requisicao";
+    @Id	
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date data;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
+    private Date dataRequisicao;
     private String parecer;
     private boolean deferido;
-    private byte[] anexos;
-    @OneToMany
-    private List<Disciplina> disciplinaSolicitada;
+    @Column(columnDefinition="LONGTEXT")
+    private String anexos;
+    @ManyToOne
+    private Disciplina disciplinaSolicitada;
+  
+    
+    public String getAnexos() {
+		return anexos;
+	}
 
-       public Long getId() {
+
+	public Long getId() {
         return id;
     }
 
@@ -50,16 +78,18 @@ public abstract class Requisicao implements Serializable {
         this.id = id;
     }
 
-    public Date getData() {
-        return data;
+
+    public Date getDataRequisicao() {
+        return dataRequisicao;
     }
 
-    public void setData(Date data) {
-        this.data = data;
+    public void setDataRequisicao(Date dataRequisicao) {
+        this.dataRequisicao = dataRequisicao;
     }
+ 
 
     public String getParecer() {
-        return parecer;
+        return parecer;	
     }
 
     public void setParecer(String parecer) {
@@ -74,24 +104,21 @@ public abstract class Requisicao implements Serializable {
         this.deferido = deferido;
     }
 
-    public byte[] getAnexos() {
-        return anexos;
-    }
 
-    public void setAnexos(byte[] anexos) {
+
+
+
+
+    public void setAnexos(String anexos) {
         this.anexos = anexos;
     }
 
-
-
-    public List<Disciplina> getDisciplinaSolicitada() {
+    public Disciplina getDisciplinaSolicitada() {
         return disciplinaSolicitada;
     }
 
-    public void setDisciplinaSolicitada(List<Disciplina> disciplinaSolicitada) {
+    public void setDisciplinaSolicitada(Disciplina disciplinaSolicitada) {
         this.disciplinaSolicitada = disciplinaSolicitada;
     }
-
-
-
+  
 }

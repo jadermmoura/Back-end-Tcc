@@ -5,14 +5,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-
 @Entity
 public class RequisicaoCertificacao extends Requisicao{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
+
+	@Transient
+    @JsonProperty("tipo")
+    private final String tipo ="certificacao";
     
-    @Transient
-     // Define o campo
-     @JsonProperty("tipo")
-    private final String tipo = "certificacao";
+
     
     private String formacaoAtividadeAnterior;
     private String criterioAvaliacao;
@@ -35,3 +41,4 @@ public class RequisicaoCertificacao extends Requisicao{
     
     
 }
+

@@ -5,17 +5,19 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
 @Entity
-public class Servidor extends Usuario{
+public class Servidor extends Usuario implements Serializable{
+        @Transient
+        // Define o campo
+        @JsonProperty("tipo")
+	private final String tipo = "servidor";
+    
 	private int siape; 
 	private String cargo; 
-	
-	@Transient
-	 // Define o campo
-	 @JsonProperty("tipo")
-	private final String tipo = "servidor";
-	
+
+        
 	public int getSiape() {
 		return siape;
 	}
@@ -28,5 +30,6 @@ public class Servidor extends Usuario{
 	public void setCargo(String cargo) {
 		this.cargo = cargo;
 	}
+
 	
 }
