@@ -11,9 +11,11 @@ import br.edu.ifrs.restinga.requisicoes.dao.ProfessorDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
+import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import br.edu.ifrs.restinga.requisicoes.modelo.Aluno;
 import br.edu.ifrs.restinga.requisicoes.modelo.Professor;
 import br.edu.ifrs.restinga.requisicoes.modelo.Requisicao;
+import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoAproveitamento;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,6 +43,17 @@ public class RequisicoesControle {
 		Date date = new Date();
 		return date;
 	}
+        private void validaRequisicao(Requisicao c){
+            RequisicaoAproveitamento cer = new RequisicaoAproveitamento();
+//            if (c.getDisciplinaSolicitada() == null) {
+//               throw new RequisicaoInvalida("disciplina e obrigatorio");
+//            }
+            if(c instanceof RequisicaoAproveitamento){
+               if (cer.getDisciplinasCursadasAnterior() == null || cer.getDisciplinasCursadasAnterior().isEmpty()) {
+               throw  new RequisicaoInvalida("disciplina cursada anteriormente não pode ser vazio");                }
+ 
+            }
+        }
 
 	@Autowired
 	RequisicaoDAO rDao;
@@ -63,7 +76,8 @@ public class RequisicoesControle {
 	@PostMapping(path = "/")
 	public ResponseEntity<Requisicao> insere(@RequestBody Requisicao c) {
 		c.setDataRequisicao(horaSistema());
-		Requisicao novaRequisicao = rDao.save(c);
+                validaRequisicao(c);
+                Requisicao novaRequisicao = rDao.save(c);
 		if (novaRequisicao != null) {
 			return new ResponseEntity<>(novaRequisicao, HttpStatus.CREATED);
 		}

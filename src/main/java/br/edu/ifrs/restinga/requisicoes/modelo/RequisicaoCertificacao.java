@@ -11,9 +11,6 @@ public class RequisicaoCertificacao extends Requisicao{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
-
-
 	@Transient
     @JsonProperty("tipo")
     private final String tipo ="certificacao";

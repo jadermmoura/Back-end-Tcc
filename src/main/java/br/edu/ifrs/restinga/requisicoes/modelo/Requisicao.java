@@ -10,10 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
 
 import java.util.Date;
-import java.util.List;
-
-import java.sql.Blob;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,8 +20,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -44,12 +38,10 @@ import javax.persistence.Transient;
     @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
 public abstract class Requisicao implements Serializable {
     
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	@Transient
-	@JsonProperty("tipo")
+   
+    private static final long serialVersionUID = 1L;
+    @Transient
+    @JsonProperty("tipo")
     private String tipo ="requisicao";
     @Id	
     @GeneratedValue(strategy = GenerationType.IDENTITY)

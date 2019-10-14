@@ -7,12 +7,10 @@ import javax.persistence.Transient;
 
 @Entity
 public class RequisicaoAproveitamento extends Requisicao{
-    /**
-	 * 
-	 */
+ 
 	private static final long serialVersionUID = 1L;
 
-	@Transient
+    @Transient
     @JsonProperty("tipo")
     private final String tipo ="aproveitamento";
     

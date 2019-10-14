@@ -21,7 +21,7 @@ public class SwaggerConfig {
     public Docket productApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("br.edu.ifrs.restinga.requisicoe"))
+                .apis(RequestHandlerSelectors.basePackage("br.edu.ifrs.restinga.requisicoes"))
                 .paths(PathSelectors.any()) //PathSelectors.any()
                 .build()	
                 .apiInfo(metaInfo());
