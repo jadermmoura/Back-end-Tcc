@@ -13,10 +13,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
-import java.util.List;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -43,23 +39,11 @@ public abstract class Usuario implements Serializable {
     private String email;
     private String permissoes;
     private boolean ativo;
-    @OneToMany
-    private List<Requisicao> requisicoes; 
 
-    public List<Requisicao> getRequisicoes() {
-        return requisicoes;
-    }
-
-    public void setRequisicoes(List<Requisicao> requisicoes) {
-        this.requisicoes = requisicoes;
-    }
-    
     @JsonProperty("tipo")
     @Transient
     private final String tipo = "usuario";
     
-
-  
     public String getNome() {
         return nome;
     }

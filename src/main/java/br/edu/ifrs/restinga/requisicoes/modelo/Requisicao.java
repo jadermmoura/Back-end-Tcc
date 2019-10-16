@@ -56,6 +56,8 @@ public abstract class Requisicao implements Serializable {
     private String anexos;
     @ManyToOne
     private Disciplina disciplinaSolicitada;
+    @ManyToOne
+    private Usuario usuario;
   
     
     public String getAnexos() {
@@ -97,10 +99,21 @@ public abstract class Requisicao implements Serializable {
         this.deferido = deferido;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
 
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 
     public void setAnexos(String anexos) {
         this.anexos = anexos;
