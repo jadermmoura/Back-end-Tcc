@@ -113,35 +113,35 @@ public class RequisicoesControle {
 		return new ResponseEntity<List<Requisicao>>(aux, HttpStatus.OK);
 	}
 
-	@GetMapping("/busca-requisicoes-por-aluno/{idAluno}")
-	public ResponseEntity<List<Requisicao>> requisicaosPorAluno(@PathVariable Long idAluno) {
-		Optional<Aluno> aluno = aDao.findById(idAluno);
-		if (aluno.isPresent()) {
-			if (!aluno.get().getRequisicoes().isEmpty()) {
-				return new ResponseEntity<List<Requisicao>>(aluno.get().getRequisicoes(), HttpStatus.OK);
-			}
-			throw new NaoEncontrado("Não foi possível encontrar as requisições desse aluno. ");
-		} else {
+//	@GetMapping("/busca-requisicoes-por-aluno/{idAluno}")
+//	public ResponseEntity<List<Requisicao>> requisicaosPorAluno(@PathVariable Long idAluno) {
+//		Optional<Aluno> aluno = aDao.findById(idAluno);
+//		if (aluno.isPresent()) {
+//			if (!aluno.get().getRequisicoes().isEmpty()) {
+//				return new ResponseEntity<List<Requisicao>>(aluno.get().getRequisicoes(), HttpStatus.OK);
+//			}
+//			throw new NaoEncontrado("Não foi possível encontrar as requisições desse aluno. ");
+//		} else {
+//
+//			throw new NaoEncontrado("O aluno especificado, não foi encontrado no sistema.");
+//		}
+//
+//	}
 
-			throw new NaoEncontrado("O aluno especificado, não foi encontrado no sistema.");
-		}
-
-	}
-
-	@GetMapping("/busca-requisicoes-por-professor/{idProfessor}")
-	public ResponseEntity<List<Requisicao>> requisicaosPorProfessor(@PathVariable Long idProfessor) {
-
-		Optional<Professor> teste = pDao.findById(idProfessor);
-		if (teste.isPresent()) {
-			if (!teste.get().getRequisicoes().isEmpty()) {
-				return new ResponseEntity<List<Requisicao>>(teste.get().getRequisicoes(), HttpStatus.OK);
-			}
-			throw new NaoEncontrado("Não foi possível encontrar as requisições atrelados a esse professor. ");
-		} else {
-			throw new NaoEncontrado("O professor especificado, não foi encontrado no sistema.");
-			
-		}
-
-	}
+//	@GetMapping("/busca-requisicoes-por-professor/{idProfessor}")
+//	public ResponseEntity<List<Requisicao>> requisicaosPorProfessor(@PathVariable Long idProfessor) {
+//
+//		Optional<Professor> teste = pDao.findById(idProfessor);
+//		if (teste.isPresent()) {
+//			if (!teste.get().getRequisicoes().isEmpty()) {
+//				return new ResponseEntity<List<Requisicao>>(teste.get().getRequisicoes(), HttpStatus.OK);
+//			}
+//			throw new NaoEncontrado("Não foi possível encontrar as requisições atrelados a esse professor. ");
+//		} else {
+//			throw new NaoEncontrado("O professor especificado, não foi encontrado no sistema.");
+//			
+//		}
+//
+//	}
 
 }

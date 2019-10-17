@@ -14,6 +14,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
 
+
+
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 //Configurando herança
@@ -29,7 +32,12 @@ import java.io.Serializable;
         @JsonSubTypes.Type(name = "professor", value = Professor.class)})
 
 public abstract class Usuario implements Serializable {
-
+    
+    @JsonProperty("tipo")
+    @Transient
+    private final String tipo = "usuario";
+    
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,10 +48,14 @@ public abstract class Usuario implements Serializable {
     private String permissoes;
     private boolean ativo;
 
-    @JsonProperty("tipo")
-    @Transient
-    private final String tipo = "usuario";
-    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -92,20 +104,7 @@ public abstract class Usuario implements Serializable {
         this.ativo = ativo;
     }
 
-    public Long getID() {
-        return id;
-    }
-
-    public void setID(Long id) {
-        this.id = id;
-    }
-
-     public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+  
+  
 
 }

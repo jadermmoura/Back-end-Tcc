@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,29 +37,34 @@ public class UsuariosControle {
         return usuarioDAO.findAll();
     }
 
-///////////// INSERIR USUÁRIO ////////////////////////           
-    
-    @RequestMapping(path = "/usuarios/", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Usuario inserir(@RequestBody Usuario usuario) {
-        usuario.setID(Long.MIN_VALUE);
-        //Validações aqui
-        //Vou verificar se o login existe:
-        Iterable<Usuario> usuarios = usuarioDAO.findAll();
-        boolean loginIgual = false;
-        for (Usuario loginEntrada : usuarios) {
-            if (loginEntrada.getLogin().equals(usuario.getLogin())) {
-                loginIgual = true;
-                break;
-            }
-        }
-        if (loginIgual== true) {
-            throw new RequisicaoInvalida("Este login JÁ EXISTE. Escolha outro");
-            
-        }
-        return usuarioDAO.save(usuario);
+    @PostMapping("/usuarios")
+    public Usuario novoUsuario(@RequestBody Usuario usuario){
+        return usuarioDAO.save(usuario); 
     }
     
+///////////// INSERIR USUÁRIO ////////////////////////           
+    
+//    @RequestMapping(path = "/usuarios/", method = RequestMethod.POST)
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public Usuario inserir(@RequestBody Usuario usuario) {
+//        usuario.setID(Long.MIN_VALUE);
+//        //Validações aqui
+//        //Vou verificar se o login existe:
+//        Iterable<Usuario> usuarios = usuarioDAO.findAll();
+//        boolean loginIgual = false;
+//        for (Usuario loginEntrada : usuarios) {
+//            if (loginEntrada.getLogin().equals(usuario.getLogin())) {
+//                loginIgual = true;
+//                break;
+//            }
+//        }
+//        if (loginIgual== true) {
+//            throw new RequisicaoInvalida("Este login JÁ EXISTE. Escolha outro");
+//            
+//        }
+//        return usuarioDAO.save(usuario);
+//    }
+//    
 ///////////// RECUPERAR USUÁRIO PELA ID ////////////////////////               
 
     @RequestMapping(path = "/usuarios/{id}", method = RequestMethod.GET)
