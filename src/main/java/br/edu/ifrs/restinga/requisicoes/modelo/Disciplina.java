@@ -1,9 +1,3 @@
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
 import java.io.Serializable;
@@ -12,10 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-/**
- *
- * @author jader
- */
 @Entity
 public class Disciplina implements Serializable {
 
@@ -25,8 +15,6 @@ public class Disciplina implements Serializable {
     private String nome;
     private int cargaHoraria;
 
-    
-    
     public String getNome() {
         return nome;
     }
@@ -50,9 +38,5 @@ public class Disciplina implements Serializable {
     public void setId(long id) {
         this.id = id;
     }
-
-   
-    
-    
 }
 

@@ -1,4 +1,3 @@
-
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,6 +44,4 @@ public class Curso implements Serializable {
     public void setDisciplinas(List<Disciplina> disciplinas) {
         this.disciplinas = disciplinas;
     }
-
-   
 }

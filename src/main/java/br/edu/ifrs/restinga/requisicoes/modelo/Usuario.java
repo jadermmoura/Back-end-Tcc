@@ -7,15 +7,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
-
-
-
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -27,9 +23,8 @@ import java.io.Serializable;
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
     @JsonSubTypes.Type(name = "aluno", value = Aluno.class),
-
     @JsonSubTypes.Type(name = "servidor", value = Servidor.class),
-        @JsonSubTypes.Type(name = "professor", value = Professor.class)})
+    @JsonSubTypes.Type(name = "professor", value = Professor.class)})
 
 public abstract class Usuario implements Serializable {
     
@@ -103,8 +98,4 @@ public abstract class Usuario implements Serializable {
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
-
-  
-  
-
 }

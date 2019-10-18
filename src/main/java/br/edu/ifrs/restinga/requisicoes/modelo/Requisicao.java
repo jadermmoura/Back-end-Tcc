@@ -3,14 +3,11 @@ package br.edu.ifrs.restinga.requisicoes.modelo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
-
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -38,7 +34,6 @@ import javax.persistence.Transient;
     @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
 public abstract class Requisicao implements Serializable {
     
-   
     private static final long serialVersionUID = 1L;
     @Transient
     @JsonProperty("tipo")
@@ -46,7 +41,6 @@ public abstract class Requisicao implements Serializable {
     @Id	
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date dataRequisicao;
@@ -59,20 +53,17 @@ public abstract class Requisicao implements Serializable {
     @ManyToOne
     private Usuario usuario;
   
-    
     public String getAnexos() {
 		return anexos;
-	}
+    }
 
-
-	public Long getId() {
-        return id;
+    public Long getId() {
+    return id;
     }
 
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public Date getDataRequisicao() {
         return dataRequisicao;
@@ -82,7 +73,6 @@ public abstract class Requisicao implements Serializable {
         this.dataRequisicao = dataRequisicao;
     }
  
-
     public String getParecer() {
         return parecer;	
     }
@@ -126,5 +116,4 @@ public abstract class Requisicao implements Serializable {
     public void setDisciplinaSolicitada(Disciplina disciplinaSolicitada) {
         this.disciplinaSolicitada = disciplinaSolicitada;
     }
-  
 }

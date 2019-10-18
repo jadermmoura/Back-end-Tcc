@@ -3,7 +3,6 @@ package br.edu.ifrs.restinga.requisicoes.controle;
 import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
-import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import br.edu.ifrs.restinga.requisicoes.modelo.Usuario;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RestController
 @CrossOrigin
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/usuarios")
 public class UsuariosControle {
     
    @Autowired
@@ -32,12 +29,12 @@ public class UsuariosControle {
     
 ///////////// LISTAR USUÁRIOS ////////////////////////       
 
-    @RequestMapping(path = "/usuarios/", method = RequestMethod.GET)
+    @RequestMapping(path = "/", method = RequestMethod.GET)
     public Iterable<Usuario> listar() {
         return usuarioDAO.findAll();
     }
 
-    @PostMapping("/usuarios")
+    @PostMapping("/")
     public Usuario novoUsuario(@RequestBody Usuario usuario){
         return usuarioDAO.save(usuario); 
     }
