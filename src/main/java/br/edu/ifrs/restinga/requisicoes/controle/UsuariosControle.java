@@ -4,6 +4,7 @@ import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
+import br.edu.ifrs.restinga.requisicoes.modelo.Servidor;
 import br.edu.ifrs.restinga.requisicoes.modelo.Usuario;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/usuarios")
 public class UsuariosControle {
     
    @Autowired
@@ -30,18 +31,57 @@ public class UsuariosControle {
     @Autowired
     RequisicaoDAO requisicaoDAO;
     
-///////////// LISTAR USUÁRIOS ////////////////////////       
-
-    @RequestMapping(path = "/usuarios/", method = RequestMethod.GET)
+    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
     public Iterable<Usuario> listar() {
         return usuarioDAO.findAll();
     }
 
-    @PostMapping("/usuarios")
+    @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     public Usuario novoUsuario(@RequestBody Usuario usuario){
         return usuarioDAO.save(usuario); 
     }
     
+
+    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Usuario recuperar(@PathVariable long id) {
+        Optional<Usuario> findById = usuarioDAO.findById(id);
+        if (findById.isPresent()) {
+            return findById.get();
+        } else {
+            throw new NaoEncontrado("USUÁRIO não encontrado");
+        }
+    }
+//faltou atualizar siape , cargo , tipo    
+    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Usuario atualizar(@PathVariable long id, @RequestBody Usuario usuario){
+        if (usuarioDAO.existsById(id)){
+            usuario.setId(id);
+            Usuario usuarioAntigo = recuperar(id);
+            usuarioAntigo.setNome(usuario.getNome());
+            usuarioAntigo.setLogin(usuario.getLogin());
+            usuarioAntigo.setSenha(usuario.getSenha());
+            usuarioAntigo.setEmail(usuario.getEmail());
+            usuarioAntigo.setPermissoes(usuario.getPermissoes());
+            usuarioAntigo.setAtivo(usuario.isAtivo());
+           return usuarioDAO.save(usuario);
+        }else{
+            throw new NaoEncontrado("USUÁRIO não encontrado");
+        }
+    }
+    
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void apagar(@PathVariable long id){
+        if (usuarioDAO.existsById(id)){
+            usuarioDAO.deleteById(id);
+        }else {
+            throw new NaoEncontrado("USUÁRIO não encontrado");
+        }
+    } 
 ///////////// INSERIR USUÁRIO ////////////////////////           
     
 //    @RequestMapping(path = "/usuarios/", method = RequestMethod.POST)
@@ -64,42 +104,4 @@ public class UsuariosControle {
 //        }
 //        return usuarioDAO.save(usuario);
 //    }
-//    
-///////////// RECUPERAR USUÁRIO PELA ID ////////////////////////               
-
-    @RequestMapping(path = "/usuarios/{id}", method = RequestMethod.GET)
-    public Usuario recuperar(@PathVariable long id) {
-        Optional<Usuario> findById = usuarioDAO.findById(id);
-        if (findById.isPresent()) {
-            return findById.get();
-        } else {
-            throw new NaoEncontrado("USUÁRIO não encontrado");
-        }
-    }
-    
-///////////// ATUALIZAR USUÁRIO PELA ID ////////////////////////               
-
-    @RequestMapping(path = "/usuarios/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public void atualizar(@PathVariable long id, @RequestBody Usuario usuario){
-        if (usuarioDAO.existsById(id)){
-            usuario.setId(id);
-            //Validações aqui
-            usuarioDAO.save(usuario);
-        }else{
-            throw new NaoEncontrado("USUÁRIO não encontrado");
-        }
-    }
-    
-///////////// APAGAR USUÁRIO PELA ID ////////////////////////               
-    
-    @RequestMapping(path = "/usuarios/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void apagar(@PathVariable long id){
-        if (usuarioDAO.existsById(id)){
-            usuarioDAO.deleteById(id);
-        }else {
-            throw new NaoEncontrado("USUÁRIO não encontrado");
-        }
-    } 
 }
