@@ -1,13 +1,11 @@
 
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,49 +14,72 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 //Configurando herança
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo")
+@Inheritance(strategy = InheritanceType.JOINED)
+
 //define o tipo raiz
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME, 
+    include = JsonTypeInfo.As.EXISTING_PROPERTY, 
+    property = "tipo"
+)
 @JsonTypeName("requisicao")
+
 //tem que definir as subclasses conhecidas
 @JsonSubTypes({
-    @JsonSubTypes.Type(name = "aproveitamento", value = RequisicaoAproveitamento.class),
-    @JsonSubTypes.Type(name = "certificacao", value = RequisicaoCertificacao.class)})
+    @JsonSubTypes.Type(
+        name = "aproveitamento", 
+        value = RequisicaoAproveitamento.class
+    ),
+    @JsonSubTypes.Type(
+        name = "certificacao", 
+        value = RequisicaoCertificacao.class
+    )
+})
+
 public abstract class Requisicao implements Serializable {
     
     private static final long serialVersionUID = 1L;
+    
     @Transient
     @JsonProperty("tipo")
     private String tipo ="requisicao";
+
     @Id	
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date dataRequisicao;
+    
     private String parecer;
     private boolean deferido;
-    @Column(columnDefinition="LONGTEXT")
-    private String anexos;
+            
     @ManyToOne
     private Disciplina disciplinaSolicitada;
+    
     @ManyToOne
     private Usuario usuario;
-  
-    public String getAnexos() {
-		return anexos;
-    }
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column(nullable = false)
+    private List<Anexo> anexos;    
+  
     public Long getId() {
-    return id;
+        return id;
     }
 
     public void setId(Long id) {
@@ -105,15 +126,19 @@ public abstract class Requisicao implements Serializable {
         this.usuario = usuario;
     }
 
-    public void setAnexos(String anexos) {
-        this.anexos = anexos;
-    }
-
     public Disciplina getDisciplinaSolicitada() {
         return disciplinaSolicitada;
     }
 
     public void setDisciplinaSolicitada(Disciplina disciplinaSolicitada) {
         this.disciplinaSolicitada = disciplinaSolicitada;
+    }
+
+    public List<Anexo> getAnexos() {
+        return anexos;
+    }
+
+    public void setAnexos(List<Anexo> anexos) {
+        this.anexos = anexos;
     }
 }

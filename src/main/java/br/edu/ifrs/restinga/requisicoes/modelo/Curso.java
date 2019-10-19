@@ -12,11 +12,14 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Curso implements Serializable {
-
+    private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    
     private String nome;
+
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Disciplina> disciplinas;

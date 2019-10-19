@@ -1,18 +1,9 @@
 package br.edu.ifrs.restinga.requisicoes.controle;
 
-import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.DisciplinaDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.ProfessorDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
-import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
-import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
-import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
-import br.edu.ifrs.restinga.requisicoes.modelo.Requisicao;
-import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoAproveitamento;
-import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoCertificacao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,15 +16,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
+import br.edu.ifrs.restinga.requisicoes.dao.AnexoDAO;
+import br.edu.ifrs.restinga.requisicoes.dao.DisciplinaDAO;
+import br.edu.ifrs.restinga.requisicoes.dao.ProfessorDAO;
+import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
+import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
+import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
+import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
+import br.edu.ifrs.restinga.requisicoes.modelo.Requisicao;
+import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoAproveitamento;
+import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoCertificacao;
+
 @RestController
 @CrossOrigin
 @RequestMapping(path = "/api/requisicoes")
 public class RequisicoesControle {
+    
+    @Autowired
+    RequisicaoDAO rDao;
 
+    @Autowired
+    DisciplinaDAO dDao;
+
+    @Autowired
+    AlunoDAO aDao;
+
+    @Autowired
+    ProfessorDAO pDao;
+
+    @Autowired
+    AnexoDAO anexoDao;
+    
     private static Date horaSistema() {
-            Date date = new Date();
-            return date;
+        return new Date();
     }
+
     private void validaRequisicao(Requisicao c) {
         if (c.getDisciplinaSolicitada() == null) {
             throw new RequisicaoInvalida("disciplina e obrigatorio");
@@ -55,33 +73,23 @@ public class RequisicoesControle {
         }
     }
 
-    @Autowired
-    RequisicaoDAO rDao;
-
-    @Autowired
-    DisciplinaDAO dDao;
-
-    @Autowired
-    AlunoDAO aDao;
-
-    @Autowired
-    ProfessorDAO pDao;
-
     @GetMapping(path = "/")
     public ResponseEntity<?> listarRequisicao() {
-            Iterable<Requisicao> r = rDao.findAll();
-            return new ResponseEntity<>(r, HttpStatus.OK);
+        Iterable<Requisicao> r = rDao.findAll();
+        return new ResponseEntity<>(r, HttpStatus.OK);
     }
 
     @PostMapping(path = "/")
-    public ResponseEntity<Requisicao> insere(@RequestBody Requisicao c) {
-            c.setDataRequisicao(horaSistema());
-            validaRequisicao(c);
-            Requisicao novaRequisicao = rDao.save(c);
-            if (novaRequisicao != null) {
-                    return new ResponseEntity<>(novaRequisicao, HttpStatus.CREATED);
-            }
-            throw new ErroServidor("Não foi possivel salvar a requisição");
+    public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
+        requisicao.setDataRequisicao(horaSistema());
+        validaRequisicao(requisicao);
+        
+        Requisicao novaRequisicao = rDao.save(requisicao);
+        
+        if (novaRequisicao != null) {
+            return new ResponseEntity<>(novaRequisicao, HttpStatus.CREATED);
+        }
+        throw new ErroServidor("Não foi possivel salvar a requisição");
     }
    
     @GetMapping(path = "/requisicaoPorPeriodo/")
@@ -92,8 +100,7 @@ public class RequisicoesControle {
             return rDao.findByDataRequisicaoBetween(inicio, fim);
         }else{
             throw new RequisicaoInvalida("digite uma data valida");
-        }
-        
+        }        
     }
         
      /*
@@ -101,28 +108,28 @@ public class RequisicoesControle {
      */
     @GetMapping("/busca-requisicao-pela-disciplina/{id}")
     public ResponseEntity<List<Requisicao>> requisicaoPorDisciplina(@PathVariable Long id) {
-            List<Requisicao> requisicao = rDao.findByDisciplinaSolicitada(dDao.findById(id).get());
-            if (requisicao.isEmpty()) {
-                    throw new NaoEncontrado("Não foi possível achar registro contendo a disciplina especificada.");
-            }
-            return new ResponseEntity<List<Requisicao>>(requisicao, HttpStatus.OK);
+        List<Requisicao> requisicao = rDao.findByDisciplinaSolicitada(dDao.findById(id).get());
+        if (requisicao.isEmpty()) {
+            throw new NaoEncontrado("Não foi possível achar registro contendo a disciplina especificada.");
+        }
+        return new ResponseEntity<List<Requisicao>>(requisicao, HttpStatus.OK);
     }
 
     @GetMapping("/busca-requisicao-por-periodos/{inicio}/{fim}")
     public ResponseEntity<List<Requisicao>> requisicaoEntrePeriodos(@PathVariable Date inicio, @PathVariable Date fim) {
-            List<Requisicao> requisicoes = (List<Requisicao>) this.listarRequisicao();
+        List<Requisicao> requisicoes = (List<Requisicao>) this.listarRequisicao();
 
-            List<Requisicao> aux = new ArrayList<>();
-            requisicoes.forEach(x -> {
-                    if (x.getDataRequisicao().after(inicio) && x.getDataRequisicao().before(fim)) {
-                            aux.add(x);
-                    }
-            });
-            if (aux.isEmpty()) {
-                    throw new NaoEncontrado("Não foi possível encontrar um registro no período solicitado. ");
+        List<Requisicao> aux = new ArrayList<>();
+        requisicoes.forEach(x -> {
+            if (x.getDataRequisicao().after(inicio) && x.getDataRequisicao().before(fim)) {
+                    aux.add(x);
             }
+        });
+        if (aux.isEmpty()) {
+            throw new NaoEncontrado("Não foi possível encontrar um registro no período solicitado. ");
+        }
 
-            return new ResponseEntity<List<Requisicao>>(aux, HttpStatus.OK);
+        return new ResponseEntity<List<Requisicao>>(aux, HttpStatus.OK);
     }
 
 //	@GetMapping("/busca-requisicoes-por-aluno/{idAluno}")
@@ -155,5 +162,4 @@ public class RequisicoesControle {
 //		}
 //
 //	}
-
 }
