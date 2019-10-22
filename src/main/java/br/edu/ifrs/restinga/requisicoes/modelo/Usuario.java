@@ -1,5 +1,6 @@
 package br.edu.ifrs.restinga.requisicoes.modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,7 +39,11 @@ public abstract class Usuario implements Serializable {
     private Long id;
     private String nome;
     private String login;
+    @JsonIgnore
     private String senha;
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String novaSenha;
     private String email;
     private String permissoes;
     private boolean ativo;
@@ -97,5 +102,13 @@ public abstract class Usuario implements Serializable {
 
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public String getNovaSenha() {
+        return novaSenha;
+    }
+
+    public void setNovaSenha(String novaSenha) {
+        this.novaSenha = novaSenha;
     }
 }
