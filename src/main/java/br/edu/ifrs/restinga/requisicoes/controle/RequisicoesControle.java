@@ -24,6 +24,7 @@ import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
+import br.edu.ifrs.restinga.requisicoes.modelo.Anexo;
 import br.edu.ifrs.restinga.requisicoes.modelo.Requisicao;
 import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoAproveitamento;
 import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoCertificacao;
@@ -69,6 +70,20 @@ public class RequisicoesControle {
             if (((RequisicaoCertificacao) c).getFormacaoAtividadeAnterior() == null
                     || ((RequisicaoCertificacao) c).getFormacaoAtividadeAnterior().isEmpty()) {
                 throw new RequisicaoInvalida("formação ou atividade anterior e obrigatorio");
+            }
+        }
+        for (int i = 0; i < c.getAnexos().size(); i++) {
+            if (c.getAnexos().get(i).getArquivo() == null || c.getAnexos().get(i).getArquivo().isEmpty()) {
+                throw new RequisicaoInvalida("arquivo e obrigatorio em anexos");
+            }
+            if (c.getAnexos().get(i).getNome() == null || c.getAnexos().get(i).getNome().isEmpty()) {
+                throw new RequisicaoInvalida("nome e obrigatorio em anexos");
+            }
+            if (c.getAnexos().get(i).getTamanho() == null || c.getAnexos().get(i).getTamanho().isEmpty()) {
+                throw new RequisicaoInvalida("tamanho e obrigatorio em anexos");
+            }
+            if (c.getAnexos().get(i).getTipo() == null || c.getAnexos().get(i).getTipo().isEmpty()) {
+                throw new RequisicaoInvalida("tipo e obrigatorio em anexos");
             }
         }
     }
