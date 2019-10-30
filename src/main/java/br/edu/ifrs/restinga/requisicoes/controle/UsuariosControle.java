@@ -5,6 +5,7 @@ import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.Proibido;
+import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import br.edu.ifrs.restinga.requisicoes.modelo.Aluno;
 import br.edu.ifrs.restinga.requisicoes.modelo.Professor;
 import br.edu.ifrs.restinga.requisicoes.modelo.Servidor;
@@ -12,7 +13,6 @@ import br.edu.ifrs.restinga.requisicoes.modelo.Usuario;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -38,7 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RequestMapping(path = "/api/usuarios")
 public class UsuariosControle {
-     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
+    
+    public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
     
     @Autowired
     UsuarioDAO usuarioDAO;
@@ -46,7 +47,35 @@ public class UsuariosControle {
     @Autowired
     RequisicaoDAO requisicaoDAO;
     
-
+    private void validaUsuario(Usuario u) {
+        if (u instanceof Aluno) {
+            if (u.getNome() == null || u.getNome() == ""
+                    || u.getLogin() == null || u.getLogin() == ""
+                    || ((Aluno) u).getMatricula() == 0
+                    || ((Aluno) u).getDataIngresso() == null
+                    || ((Aluno) u).getDataIngresso().equals("")
+                    || u.getSenha() == null || u.getSenha() == "") {
+                throw new RequisicaoInvalida("Todos os campos são obrigatórios");
+            }
+        } else if (u instanceof Servidor) {
+            if (u.getNome() == null || u.getNome() == ""
+                    || u.getLogin() == null || u.getLogin() == ""
+                    || u.getSenha() == null || u.getSenha() == ""
+                    || u.getEmail() == null || u.getEmail() == ""
+                    || u.getPermissoes() == null || u.getPermissoes() == "") {
+                throw new RequisicaoInvalida("Todos os campos são obrigatórios");
+            }
+        } else if (u instanceof Professor) {
+            if (u.getNome() == null || u.getNome() == ""
+                    || u.getLogin() == null || u.getLogin() == ""
+                    || u.getSenha() == null || u.getSenha() == ""
+                    || u.getEmail() == null || u.getEmail() == ""
+                    || u.getPermissoes() == null || u.getPermissoes() == ""
+                    || ((Professor) u).getSiape() == 0) {
+                throw new RequisicaoInvalida("Todos os campos são obrigatórios");
+            }
+        }
+    }
 ///////////// LISTAR USUÁRIOS ////////////////////////       
 
     @PreAuthorize("hasAuthority('servidor')")
@@ -63,15 +92,15 @@ public class UsuariosControle {
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario novoUsuario(@AuthenticationPrincipal MeuUser usuarioAutenticado,
-            @RequestBody Usuario usuario){
+            @RequestBody Usuario usuario) {
+        validaUsuario(usuario);
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
-        if (usuarioAutenticado == null || !usuarioAutenticado.getUsuario().getPermissoes().contains("servidor") || 
-                !usuarioAutenticado.getUsuario().getPermissoes().contains("professor")) {
+        if (usuarioAutenticado == null || !usuarioAutenticado.getUsuario().getPermissoes().contains("servidor")
+                || !usuarioAutenticado.getUsuario().getPermissoes().contains("professor")) {
             usuario.setPermissoes("aluno");
         }
-        return usuarioDAO.save(usuario); 
+        return usuarioDAO.save(usuario);
     }
-    
 
     // recuperar o usuario pela id
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
@@ -87,7 +116,7 @@ public class UsuariosControle {
             }
         }
         throw new Proibido("não e permitido acessar dados de outros usuarios");
-
+        
     }
 
     // atualizar os usuarios
@@ -95,7 +124,7 @@ public class UsuariosControle {
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario atualizar(@AuthenticationPrincipal MeuUser usuarioAutenticado,
             @PathVariable long id, @RequestBody Usuario usuario) {
-
+        validaUsuario(usuario);
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             if (usuarioDAO.existsById(id)) {
                 usuario.setId(id);
@@ -113,7 +142,7 @@ public class UsuariosControle {
                         ((Servidor) usuarioAntigo).setCargo(((Servidor) usuario).getCargo());
                         ((Servidor) usuarioAntigo).setSiape(((Servidor) usuario).getSiape());
                     }
-
+                    
                 }
                 if (usuarioAntigo instanceof Aluno) {
                     if (usuario instanceof Aluno) {
@@ -137,41 +166,42 @@ public class UsuariosControle {
     
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void apagar(@PathVariable long id){
-        if (usuarioDAO.existsById(id)){
+    public void apagar(@PathVariable long id) {
+        if (usuarioDAO.existsById(id)) {
             usuarioDAO.deleteById(id);
-        }else {
+        } else {
             throw new NaoEncontrado("USUÁRIO não encontrado");
         }
     }
-    
+
     //login normal so com usuario e senha para autenticação
     @RequestMapping(path = "/usuarios/login/", method = RequestMethod.GET)
-    public Usuario login(@RequestParam String usuario, 
+    public Usuario login(@RequestParam String usuario,
             @RequestParam String senha) {
         Usuario usuarioBanco = usuarioDAO.findByLogin(usuario);
-        if(usuarioBanco!=null) {
-        boolean matches = 
-                PASSWORD_ENCODER.matches(senha, usuarioBanco.getSenha());
-        if(matches) {
-            return usuarioBanco;
+        if (usuarioBanco != null) {
+            boolean matches
+                    = PASSWORD_ENCODER.matches(senha, usuarioBanco.getSenha());
+            if (matches) {
+                return usuarioBanco;
+            }
         }
-        }
-        throw  new NaoEncontrado("Usuário e/ou senha incorreto(s)");
+        throw new NaoEncontrado("Usuário e/ou senha incorreto(s)");
     }
-    
+
     // este seria o login por token que depois de um certo tempo precisa se logar novamente ao sistema
     public static final String SEGREDO = "string grande ";
+    
     @RequestMapping(path = "/usuarios/loginOld/", method = RequestMethod.GET)
     public ResponseEntity<Usuario> loginToken(@RequestParam String usuario,
             @RequestParam String senha) throws UnsupportedEncodingException {
         
         Usuario usuarioBanco = usuarioDAO.findByLogin(usuario);
         if (usuarioBanco != null) {
-            boolean achou = 
-                    PASSWORD_ENCODER.matches(senha, usuarioBanco.getSenha());
+            boolean achou
+                    = PASSWORD_ENCODER.matches(senha, usuarioBanco.getSenha());
             if (achou) {
-                
+
                 // aqui podemos fazer com chave publica e privada se quiser que fique mais seguro o token
                 Algorithm algorithm = Algorithm.HMAC512(SEGREDO);
                 Calendar agora = Calendar.getInstance();
@@ -183,7 +213,7 @@ public class UsuariosControle {
                         sign(algorithm);
                 HttpHeaders respHeaders = new HttpHeaders();
                 respHeaders.set("token", token);
-                return new ResponseEntity<>(usuarioBanco, 
+                return new ResponseEntity<>(usuarioBanco,
                         respHeaders, HttpStatus.OK);
             }
         }
