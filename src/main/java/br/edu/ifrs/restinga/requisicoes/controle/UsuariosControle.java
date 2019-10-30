@@ -54,13 +54,13 @@ public class UsuariosControle {
                     || ((Aluno) u).getMatricula() == 0
                     || ((Aluno) u).getDataIngresso() == null
                     || ((Aluno) u).getDataIngresso().equals("")
-                    || u.getSenha() == null || u.getSenha() == "") {
+                    ||  u.getSenha() == "") {
                 throw new RequisicaoInvalida("Todos os campos são obrigatórios");
             }
         } else if (u instanceof Servidor) {
             if (u.getNome() == null || u.getNome() == ""
                     || u.getLogin() == null || u.getLogin() == ""
-                    || u.getSenha() == null || u.getSenha() == ""
+                    || u.getSenha() == ""
                     || u.getEmail() == null || u.getEmail() == ""
                     || u.getPermissoes() == null || u.getPermissoes() == "") {
                 throw new RequisicaoInvalida("Todos os campos são obrigatórios");
@@ -68,7 +68,7 @@ public class UsuariosControle {
         } else if (u instanceof Professor) {
             if (u.getNome() == null || u.getNome() == ""
                     || u.getLogin() == null || u.getLogin() == ""
-                    || u.getSenha() == null || u.getSenha() == ""
+                    || u.getSenha() == ""
                     || u.getEmail() == null || u.getEmail() == ""
                     || u.getPermissoes() == null || u.getPermissoes() == ""
                     || ((Professor) u).getSiape() == 0) {
@@ -77,6 +77,8 @@ public class UsuariosControle {
         }
     }
 ///////////// LISTAR USUÁRIOS ////////////////////////       
+
+
 
     @PreAuthorize("hasAuthority('servidor')")
     @RequestMapping(path = "/", method = RequestMethod.GET)
