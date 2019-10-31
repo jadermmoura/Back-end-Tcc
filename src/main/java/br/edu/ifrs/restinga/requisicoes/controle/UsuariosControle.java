@@ -49,29 +49,29 @@ public class UsuariosControle {
     
     private void validaUsuario(Usuario u) {
         if (u instanceof Aluno) {
-            if (u.getNome() == null || u.getNome() == ""
-                    || u.getLogin() == null || u.getLogin() == ""
-                    || ((Aluno) u).getMatricula() == 0
-                    || ((Aluno) u).getDataIngresso() == null
-                    || ((Aluno) u).getDataIngresso().equals("")
-                    ||  u.getSenha() == "") {
+            if (((Aluno) u).getDataIngresso().equals("")
+                    || u.getNome() == null || u.getNome().isEmpty()
+                    || u.getLogin() == null || u.getLogin().isEmpty()
+                    || ((Aluno) u).getMatricula() <= 0 
+                    || ((Aluno) u).getDataIngresso() == null 
+                    ||  u.getNovaSenha() == null || u.getNovaSenha().isEmpty()) {
                 throw new RequisicaoInvalida("Todos os campos são obrigatórios");
             }
         } else if (u instanceof Servidor) {
-            if (u.getNome() == null || u.getNome() == ""
-                    || u.getLogin() == null || u.getLogin() == ""
-                    || u.getSenha() == ""
-                    || u.getEmail() == null || u.getEmail() == ""
-                    || u.getPermissoes() == null || u.getPermissoes() == "") {
+            if (u.getNome() == null || u.getNome().isEmpty()
+                    || u.getLogin() == null || u.getLogin().isEmpty()
+                    || u.getNovaSenha() == null || u.getNovaSenha().isEmpty()
+                    || u.getEmail() == null || u.getEmail().isEmpty()
+                    || u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
                 throw new RequisicaoInvalida("Todos os campos são obrigatórios");
             }
         } else if (u instanceof Professor) {
-            if (u.getNome() == null || u.getNome() == ""
-                    || u.getLogin() == null || u.getLogin() == ""
-                    || u.getSenha() == ""
-                    || u.getEmail() == null || u.getEmail() == ""
-                    || u.getPermissoes() == null || u.getPermissoes() == ""
-                    || ((Professor) u).getSiape() == 0) {
+            if (u.getNome() == null || u.getNome().isEmpty()
+                    || u.getLogin() == null || u.getLogin().isEmpty()
+                    || u.getNovaSenha() == null || u.getNovaSenha().isEmpty()
+                    || u.getEmail() == null || u.getEmail().isEmpty()
+                    || u.getPermissoes() == null || u.getPermissoes().isEmpty()
+                    || ((Professor) u).getSiape() <= 0) {
                 throw new RequisicaoInvalida("Todos os campos são obrigatórios");
             }
         }
