@@ -44,35 +44,45 @@ public class UsuariosControle {
     @Autowired
     UsuarioDAO usuarioDAO;
     
-    @Autowired
-    RequisicaoDAO requisicaoDAO;
-    
     private void validaUsuario(Usuario u) {
+        Usuario usuario = usuarioDAO.findByLogin(u.getLogin());
+        if (usuario != null) {
+            throw new RequisicaoInvalida("este login ja existe");
+        }
+        if (u.getEmail() == null || u.getEmail().isEmpty()) {
+            throw new RequisicaoInvalida("email é obrigatórios");
+        }
+        if (u.getLogin() == null || u.getLogin().isEmpty()) {
+            throw new RequisicaoInvalida("login é obrigatórios");
+        }
+        if (u.getNome() == null || u.getNome().isEmpty()) {
+            throw new RequisicaoInvalida("nome é obrigatórios");
+        }
+        if (u.getNovaSenha() == null || u.getNovaSenha().isEmpty()) {
+            throw new RequisicaoInvalida("senha e obrigatorio é obrigatórios");
+        }
+        if (u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
+            throw new RequisicaoInvalida("permissão é obrigatórios");
+        }
         if (u instanceof Aluno) {
-            if (((Aluno) u).getDataIngresso().equals("")
-                    || u.getNome() == null || u.getNome().isEmpty()
-                    || u.getLogin() == null || u.getLogin().isEmpty()
-                    || ((Aluno) u).getMatricula() <= 0 
-                    || ((Aluno) u).getDataIngresso() == null 
-                    ||  u.getNovaSenha() == null || u.getNovaSenha().isEmpty()) {
-                throw new RequisicaoInvalida("Todos os campos são obrigatórios");
+            if (((Aluno) u).getDataIngresso() == null ) {
+                throw new RequisicaoInvalida("o campo data é obrigatórios");
             }
-        } else if (u instanceof Servidor) {
-            if (u.getNome() == null || u.getNome().isEmpty()
-                    || u.getLogin() == null || u.getLogin().isEmpty()
-                    || u.getNovaSenha() == null || u.getNovaSenha().isEmpty()
-                    || u.getEmail() == null || u.getEmail().isEmpty()
-                    || u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
-                throw new RequisicaoInvalida("Todos os campos são obrigatórios");
+            if (((Aluno) u).getMatricula() <= 0) {
+                throw new RequisicaoInvalida("matricula é obrigatórios");
             }
-        } else if (u instanceof Professor) {
-            if (u.getNome() == null || u.getNome().isEmpty()
-                    || u.getLogin() == null || u.getLogin().isEmpty()
-                    || u.getNovaSenha() == null || u.getNovaSenha().isEmpty()
-                    || u.getEmail() == null || u.getEmail().isEmpty()
-                    || u.getPermissoes() == null || u.getPermissoes().isEmpty()
-                    || ((Professor) u).getSiape() <= 0) {
-                throw new RequisicaoInvalida("Todos os campos são obrigatórios");
+        } 
+        if (u instanceof Servidor) {
+            if (((Servidor) u).getCargo() == null || ((Servidor) u).getCargo().isEmpty()) {
+                throw new RequisicaoInvalida("cargo é obrigatórios");
+            }
+            if (((Servidor) u).getSiape() <= 0) {
+                throw new RequisicaoInvalida("siape é obrigatórios");
+            }
+         }
+        if (u instanceof Professor) {
+            if (((Professor) u).getSiape() <=0) {
+                throw new RequisicaoInvalida("siape é obrigatórios");
             }
         }
     }
@@ -80,26 +90,40 @@ public class UsuariosControle {
 
 
 
-    @PreAuthorize("hasAuthority('servidor')")
+    @PreAuthorize("hasAuthority('ensino')")
     @RequestMapping(path = "/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Usuario> listar(@AuthenticationPrincipal MeuUser usuarioAutenticado) {
-        if (usuarioAutenticado.getUsuario().getPermissoes().contains("servidor")) {
+        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             return usuarioDAO.findAll();
         }
         throw new Proibido("não e permitido acessar dados de outros usuarios");
     }
-
-    //inserir usuario
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario novoUsuario(@AuthenticationPrincipal MeuUser usuarioAutenticado,
-            @RequestBody Usuario usuario) {
-        validaUsuario(usuario);
+    public Usuario inserirEnsinoProfessor(@RequestBody Usuario usuario){
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
-        if (usuarioAutenticado == null || !usuarioAutenticado.getUsuario().getPermissoes().contains("servidor")
-                || !usuarioAutenticado.getUsuario().getPermissoes().contains("professor")) {
-            usuario.setPermissoes("aluno");
+        validaUsuario(usuario);
+        if (usuario instanceof Aluno) {
+           throw new Proibido("não e permitido adicionar um aluno");
+        }else if(!usuario.getPermissoes().contains("aluno")){
+            return usuarioDAO.save(usuario);
+        }
+        throw new Proibido("não e permitido adicionar um aluno");
+    }
+
+    //inserir aluno
+    @PostMapping("/aluno/")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Usuario novoUsuario(@RequestBody Usuario usuario) {
+        usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
+        usuario.setPermissoes("aluno");
+        validaUsuario(usuario);
+        if (usuario instanceof Servidor) {
+            throw new Proibido("não e permitido adicionar um servidor");
+        }
+        if (usuario instanceof Professor) {
+           throw new Proibido("não e permitido adicionar um professor");
         }
         return usuarioDAO.save(usuario);
     }
@@ -127,9 +151,10 @@ public class UsuariosControle {
     public Usuario atualizar(@AuthenticationPrincipal MeuUser usuarioAutenticado,
             @PathVariable long id, @RequestBody Usuario usuario) {
         validaUsuario(usuario);
-        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
+        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino") 
+                || usuarioAutenticado.getUsuario().getId() == id) {
             if (usuarioDAO.existsById(id)) {
-                usuario.setId(id);
+                
                 Usuario usuarioAntigo = recuperar(usuarioAutenticado, id);
                 usuarioAntigo.setNome(usuario.getNome());
                 usuarioAntigo.setLogin(usuario.getLogin());

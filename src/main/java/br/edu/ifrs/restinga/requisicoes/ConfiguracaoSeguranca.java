@@ -6,10 +6,10 @@
 package br.edu.ifrs.restinga.requisicoes;
 
 
+import br.edu.ifrs.restinga.requisicoes.autenticacao.FiltroPorToken;
 import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUserDetailsService;
+import br.edu.ifrs.restinga.requisicoes.controle.UsuariosControle;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,15 +19,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-
 import org.springframework.stereotype.Component;
 
 
 @Component
-@EnableWebS
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
+    
+ 
 
     @Autowired
     MeuUserDetailsService detailsService;
@@ -39,7 +39,7 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
         auth.userDetailsService(detailsService)
-                .passwordEncoder(Usuarios.PASSWORD_ENCODER);
+                .passwordEncoder(UsuariosControle.PASSWORD_ENCODER);
     }
 
     @Override
@@ -49,11 +49,16 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/usuarios/login/").permitAll()
                 // Caso o sistema permita o autocadastro                
                 .antMatchers(HttpMethod.POST, "/api/usuarios/").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/usuarios/aluno/").permitAll()
                 // permite o acesso somente se autenticado
                 .antMatchers("/api/**").authenticated()
                 .and().httpBasic()
+                 .and().
+                addFilterBefore(new  FiltroPorToken(usuarioDAO)
+                        , BasicAuthenticationFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable();
     }
+
 }
