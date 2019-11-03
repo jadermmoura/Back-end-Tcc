@@ -3,7 +3,6 @@ package br.edu.ifrs.restinga.requisicoes.controle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.AnexoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.DisciplinaDAO;
@@ -26,7 +24,6 @@ import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
-import br.edu.ifrs.restinga.requisicoes.modelo.Anexo;
 import br.edu.ifrs.restinga.requisicoes.modelo.Requisicao;
 import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoAproveitamento;
 import br.edu.ifrs.restinga.requisicoes.modelo.RequisicaoCertificacao;

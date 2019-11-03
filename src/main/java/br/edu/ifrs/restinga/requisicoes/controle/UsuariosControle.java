@@ -1,7 +1,6 @@
 package br.edu.ifrs.restinga.requisicoes.controle;
 
 import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUser;
-import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.Proibido;
@@ -15,12 +14,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,10 +44,7 @@ public class UsuariosControle {
     UsuarioDAO usuarioDAO;
     
     private void validaUsuario(Usuario u) {
-        Usuario usuario = usuarioDAO.findByLogin(u.getLogin());
-        if (usuario != null) {
-            throw new RequisicaoInvalida("este login ja existe");
-        }
+        
         if (u.getEmail() == null || u.getEmail().isEmpty()) {
             throw new RequisicaoInvalida("email é obrigatórios");
         }
@@ -90,7 +86,7 @@ public class UsuariosControle {
 
 
 
-    @PreAuthorize("hasAuthority('ensino')")
+   // @PreAuthorize("hasAuthority('ensino')")
     @RequestMapping(path = "/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Usuario> listar(@AuthenticationPrincipal MeuUser usuarioAutenticado) {
@@ -105,6 +101,10 @@ public class UsuariosControle {
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario inserirEnsinoProfessor(@RequestBody Usuario usuario){
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
+        Usuario usuarioBanco = usuarioDAO.findByLogin(usuario.getLogin());
+        if (usuarioBanco != null) {
+            throw new RequisicaoInvalida("este login ja existe");
+        }
         validaUsuario(usuario);
         if (usuario instanceof Aluno) {
            throw new Proibido("não e permitido adicionar um aluno");
@@ -120,6 +120,10 @@ public class UsuariosControle {
     public Usuario novoUsuario(@RequestBody Usuario usuario) {
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
         usuario.setPermissoes("aluno");
+        Usuario usuarioBanco = usuarioDAO.findByLogin(usuario.getLogin());
+        if (usuarioBanco != null) {
+            throw new RequisicaoInvalida("este login ja existe");
+        }
         validaUsuario(usuario);
         if (usuario instanceof Servidor) {
             throw new Proibido("não e permitido adicionar um servidor");
@@ -151,7 +155,7 @@ public class UsuariosControle {
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario atualizar(@AuthenticationPrincipal MeuUser usuarioAutenticado,
-            @PathVariable long id, @RequestBody Usuario usuario) {
+        @PathVariable long id, @RequestBody Usuario usuario) {
         validaUsuario(usuario);
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino") 
                 || usuarioAutenticado.getUsuario().getId() == id) {
@@ -195,12 +199,17 @@ public class UsuariosControle {
     
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void apagar(@PathVariable long id) {
-        if (usuarioDAO.existsById(id)) {
-            usuarioDAO.deleteById(id);
-        } else {
-            throw new NaoEncontrado("USUÁRIO não encontrado");
+    public List<Usuario> apagar(@AuthenticationPrincipal MeuUser usuarioAutenticado,@PathVariable long id) {
+        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
+            if (usuarioDAO.existsById(id)) {
+                usuarioDAO.deleteById(id);
+               return usuarioDAO.findAll();
+            } else {
+                throw new NaoEncontrado("USUÁRIO não encontrado");
+            }
         }
+        throw new Proibido("não e permitido apagar outros usuários");
+       
     }
 
     //login normal so com usuario e senha para autenticação
