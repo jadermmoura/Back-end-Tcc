@@ -99,6 +99,8 @@ public class UsuariosControle {
         }
         throw new Proibido("não e permitido acessar dados de outros usuarios");
     }
+    
+    //inserir ensino e professor
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario inserirEnsinoProfessor(@RequestBody Usuario usuario){

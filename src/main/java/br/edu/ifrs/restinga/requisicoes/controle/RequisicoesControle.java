@@ -20,6 +20,8 @@ import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.AnexoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.DisciplinaDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.ProfessorDAO;
+import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoAproveitamentoDAO;
+import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoCertificacaoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
@@ -36,6 +38,12 @@ public class RequisicoesControle {
     
     @Autowired
     RequisicaoDAO rDao;
+    
+    @Autowired
+    RequisicaoAproveitamentoDAO rpro;
+    
+    @Autowired
+    RequisicaoCertificacaoDAO rcert;
 
     @Autowired
     DisciplinaDAO dDao;
@@ -86,6 +94,18 @@ public class RequisicoesControle {
                 throw new RequisicaoInvalida("tipo e obrigatorio em anexos");
             }
         }
+    }
+    
+    @GetMapping(path = "/aproveitamento/")
+    public ResponseEntity<?> listaAproveitamento(){
+        List <RequisicaoAproveitamento> apro = rpro.findAll();
+        return new ResponseEntity<>(apro,HttpStatus.OK);
+    }
+    
+    @GetMapping(path = "/certificacao/")
+    public ResponseEntity<?> listaCertificacao(){
+        List<RequisicaoCertificacao> cert = rcert.findAll();
+        return  new ResponseEntity<>(cert,HttpStatus.OK);
     }
 
     @GetMapping(path = "/")
