@@ -141,15 +141,14 @@ public class RequisicoesControle {
      */
     @GetMapping("/busca-requisicao-pela-disciplina/{id}")
     public List<Requisicao> requisicaoPorDisciplina(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long id) {
-
-        List<Requisicao> requisicao = new ArrayList<>();
+        List<Requisicao> listaRequisicao = new ArrayList<>();
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
-            requisicao = rDao.findByDisciplinaSolicitada(dDao.findById(id).get());
-            if (requisicao.isEmpty()) {
+            listaRequisicao = rDao.findByDisciplinaSolicitada(dDao.findById(id).get());
+            if (listaRequisicao.isEmpty()) {
                 throw new NaoEncontrado("Não foi possível achar registro contendo a disciplina especificada.");
             }
         }
-        return requisicao;
+        return listaRequisicao;
     }
 
     @GetMapping("/busca-requisicao-por-periodos/{inicio}/{fim}")
@@ -175,7 +174,8 @@ public class RequisicoesControle {
     @GetMapping("/busca-requisicoes-por-aluno/{idAluno}")
     public List<Requisicao> requisicaosPorAluno(@PathVariable Long idAluno, @AuthenticationPrincipal MeuUser usuarioAutenticado) {
         Optional<Aluno> aluno = null;
-        if (usuarioAutenticado.getUsuario().getId() == idAluno || usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
+        if (usuarioAutenticado.getUsuario().getId() == idAluno
+                || usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             aluno = aDao.findById(idAluno);
             if (aluno.isPresent()) {
                 if (!aluno.get().getRequisicoes().isEmpty()) {
@@ -186,19 +186,20 @@ public class RequisicoesControle {
 
                 throw new NaoEncontrado("O aluno especificado, não foi encontrado no sistema.");
             }
+        }else{
+            throw  new NaoEncontrado("Não foi possível encontrar o aluno");
         }
-        return aluno.get().getRequisicoes();
-
     }
 
     @GetMapping("/busca-requisicoes-por-professor/{idProfessor}")
     public List<Requisicao> requisicaosPorProfessor(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long idProfessor) {
 
-        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino") || usuarioAutenticado.getUsuario().getId() == idProfessor) {
-            Optional<Professor> teste = pDao.findById(idProfessor);
-            if (teste.isPresent()) {
-                if (!teste.get().getRequisicoes().isEmpty()) {
-                    return teste.get().getRequisicoes();
+        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")
+                || usuarioAutenticado.getUsuario().getId() == idProfessor) {
+            Optional<Professor> professor = pDao.findById(idProfessor);
+            if (professor.isPresent()) {
+                if (!professor.get().getRequisicoes().isEmpty()) {
+                    return professor.get().getRequisicoes();
                 }
                 throw new NaoEncontrado("Não foi possível encontrar as requisições atrelados a esse professor. ");
             } else {
