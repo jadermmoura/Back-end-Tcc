@@ -20,7 +20,6 @@ public class Aluno extends Usuario implements Serializable{
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date dataIngresso;
-
     public int getMatricula() {
             return matricula;
     }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUser;
+import br.edu.ifrs.restinga.requisicoes.dao.*;
 import br.edu.ifrs.restinga.requisicoes.modelo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.AnexoDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.DisciplinaDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.ProfessorDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoAproveitamentoDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoCertificacaoDAO;
-import br.edu.ifrs.restinga.requisicoes.dao.RequisicaoDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
@@ -49,6 +43,9 @@ public class RequisicoesControle {
 
     @Autowired
     AlunoDAO aDao;
+
+    @Autowired
+    UsuarioDAO uDao;
 
     @Autowired
     ProfessorDAO pDao;
@@ -136,19 +133,23 @@ public class RequisicoesControle {
             throw new RequisicaoInvalida("Digite uma data valida");
         }
     }
+
     /*
      * 1. Por disciplina 2. Por periodos 3. Por aluno 4. Por professor responsável
      */
     @GetMapping("/busca-requisicao-pela-disciplina/{id}")
-    public List<Requisicao> requisicaoPorDisciplina(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long id) {
-        List<Requisicao> listaRequisicao = new ArrayList<>();
+    public Iterable<Requisicao> requisicaoPorDisciplina(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long id) {
+        Iterable<Requisicao> listaRequisicao = new ArrayList<>();
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             listaRequisicao = rDao.findByDisciplinaSolicitada(dDao.findById(id).get());
-            if (listaRequisicao.isEmpty()) {
+            if (listaRequisicao == null) {
                 throw new NaoEncontrado("Não foi possível achar registro contendo a disciplina especificada.");
+            }else{
+                return listaRequisicao;
             }
+        }else{
+            throw new NaoEncontrado("O usuário não tem permissão de ensino. ");
         }
-        return listaRequisicao;
     }
 
     @GetMapping("/busca-requisicao-por-periodos/{inicio}/{fim}")
@@ -172,40 +173,45 @@ public class RequisicoesControle {
     }
 
     @GetMapping("/busca-requisicoes-por-aluno/{idAluno}")
-    public List<Requisicao> requisicaosPorAluno(@PathVariable Long idAluno, @AuthenticationPrincipal MeuUser usuarioAutenticado) {
-        Optional<Aluno> aluno = null;
+    public Iterable<Requisicao> requisicaosPorAluno(@PathVariable Long idAluno, @AuthenticationPrincipal MeuUser usuarioAutenticado) {
+        Optional<Usuario> aluno = null;
         if (usuarioAutenticado.getUsuario().getId() == idAluno
                 || usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
-            aluno = aDao.findById(idAluno);
+            Iterable<Requisicao> requisicoes = new ArrayList<>();
+
+            aluno = uDao.findById(idAluno);
             if (aluno.isPresent()) {
-                if (!aluno.get().getRequisicoes().isEmpty()) {
-                    return aluno.get().getRequisicoes();
+                requisicoes = rDao.findByUsuario(aluno.get());
+                if (requisicoes != null) {
+                    return requisicoes;
+                } else {
+                    throw new NaoEncontrado("Não foi possível encontrar as requisicoes do aluno");
                 }
-                throw new NaoEncontrado("Não foi possível encontrar as requisições desse aluno. ");
             } else {
 
                 throw new NaoEncontrado("O aluno especificado, não foi encontrado no sistema.");
             }
-        }else{
-            throw  new NaoEncontrado("Não foi possível encontrar o aluno");
+        } else {
+            throw new NaoEncontrado("Você não é o aluno pesquisado ou você não tem permissão de ensino para realizar a consulta. ");
         }
     }
 
     @GetMapping("/busca-requisicoes-por-professor/{idProfessor}")
-    public List<Requisicao> requisicaosPorProfessor(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long idProfessor) {
+    public Iterable<Requisicao> requisicoesPorProfessor(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long idProfessor) {
 
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")
                 || usuarioAutenticado.getUsuario().getId() == idProfessor) {
-            Optional<Professor> professor = pDao.findById(idProfessor);
+            Optional<Usuario> professor = uDao.findById(idProfessor);
             if (professor.isPresent()) {
-                if (!professor.get().getRequisicoes().isEmpty()) {
-                    return professor.get().getRequisicoes();
-                }
-                throw new NaoEncontrado("Não foi possível encontrar as requisições atrelados a esse professor. ");
-            } else {
-                throw new NaoEncontrado("O professor especificado, não foi encontrado no sistema.");
+                Iterable<Requisicao> requisicoes = rDao.findByUsuario(professor.get());
+                if(requisicoes != null)
+                    return requisicoes;
+                else
+                    throw  new NaoEncontrado("Não foi possível encontrar requisição");
             }
+            throw new NaoEncontrado("Não foi possível encontrar as requisições atreladas a esse professor. ");
+        } else {
+            throw new NaoEncontrado("O ID fornecido ou o requerente não tem permissão para listar.");
         }
-        throw new NaoEncontrado("O professor especificado, não foi encontrado no sistema.");
     }
 }
