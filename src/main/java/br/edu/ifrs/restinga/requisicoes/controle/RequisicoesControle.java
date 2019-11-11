@@ -133,7 +133,6 @@ public class RequisicoesControle {
             throw new RequisicaoInvalida("Digite uma data valida");
         }
     }
-
     /*
      * 1. Por disciplina 2. Por periodos 3. Por aluno 4. Por professor responsável
      */
@@ -152,7 +151,7 @@ public class RequisicoesControle {
         }
     }
 
-    @GetMapping("/busca-requisicao-por-periodos/{inicio}/{fim}")
+    @GetMapping("/requisicao-periodos/{inicio}/{fim}")
     public List<Requisicao> requisicaoEntrePeriodos(@PathVariable Date inicio, @PathVariable Date fim, @AuthenticationPrincipal MeuUser usuarioAutenticado) {
         List<Requisicao> aux = new ArrayList<>();
 
@@ -172,7 +171,7 @@ public class RequisicoesControle {
         return aux;
     }
 
-    @GetMapping("/busca-requisicoes-por-aluno/{idAluno}")
+    @GetMapping("/requisicoes-por-aluno/{idAluno}")
     public Iterable<Requisicao> requisicaosPorAluno(@PathVariable Long idAluno, @AuthenticationPrincipal MeuUser usuarioAutenticado) {
         Optional<Usuario> aluno = null;
         if (usuarioAutenticado.getUsuario().getId() == idAluno
@@ -196,7 +195,7 @@ public class RequisicoesControle {
         }
     }
 
-    @GetMapping("/busca-requisicoes-por-professor/{idProfessor}")
+    @GetMapping("/requisicoes-por-professor/{idProfessor}")
     public Iterable<Requisicao> requisicoesPorProfessor(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long idProfessor) {
 
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")
