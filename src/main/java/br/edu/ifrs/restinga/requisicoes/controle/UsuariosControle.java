@@ -213,7 +213,7 @@ public class UsuariosControle {
     }
 
     //login normal so com usuario e senha para autenticação
-    @RequestMapping(path = "/usuarios/login/", method = RequestMethod.GET)
+    @RequestMapping(path = "/login/", method = RequestMethod.GET)
     public Usuario login(@RequestParam String usuario,
             @RequestParam String senha) {
         Usuario usuarioBanco = usuarioDAO.findByLogin(usuario);
@@ -230,7 +230,7 @@ public class UsuariosControle {
     // este seria o login por token que depois de um certo tempo precisa se logar novamente ao sistema
     public static final String SEGREDO = "string grande ";
     
-    @RequestMapping(path = "/usuarios/loginOld/", method = RequestMethod.GET)
+    @RequestMapping(path = "/loginToken/", method = RequestMethod.GET)
     public ResponseEntity<Usuario> loginToken(@RequestParam String usuario,
             @RequestParam String senha) throws UnsupportedEncodingException {
         
