@@ -38,7 +38,7 @@ public class FiltroPorToken
             token = request.getParameter("token");
         }
         if (token != null && !token.isEmpty()) {
-            Algorithm algorithm = Algorithm. HMAC256(SEGREDO);
+            Algorithm algorithm = Algorithm.HMAC512(SEGREDO);
             DecodedJWT decode = JWT.require(algorithm).build().verify(token);
             Integer id = decode.getClaim("id").asInt();
             Usuario usuario = usuarioDAO.findById(id).get();

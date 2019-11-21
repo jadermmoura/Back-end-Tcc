@@ -6,6 +6,7 @@ import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.Proibido;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import br.edu.ifrs.restinga.requisicoes.modelo.Aluno;
+import br.edu.ifrs.restinga.requisicoes.modelo.Login;
 import br.edu.ifrs.restinga.requisicoes.modelo.Professor;
 import br.edu.ifrs.restinga.requisicoes.modelo.Servidor;
 import br.edu.ifrs.restinga.requisicoes.modelo.Usuario;
@@ -210,36 +211,17 @@ public class UsuariosControle {
         }
         throw new Proibido("não e permitido apagar outros usuários");
        
-    }
-
-    //login normal so com usuario e senha para autenticação
-    @RequestMapping(path = "/usuarios/login/", method = RequestMethod.GET)
-    public Usuario login(@RequestParam String usuario,
-            @RequestParam String senha) {
-        Usuario usuarioBanco = usuarioDAO.findByLogin(usuario);
-        if (usuarioBanco != null) {
-            boolean matches
-                    = PASSWORD_ENCODER.matches(senha, usuarioBanco.getSenha());
-            if (matches) {
-                return usuarioBanco;
-            }
-        }
-        throw new NaoEncontrado("Usuário e/ou senha incorreto(s)");
-    }
-
+    }   
+    
     // este seria o login por token que depois de um certo tempo precisa se logar novamente ao sistema
     public static final String SEGREDO = "string grande ";
     
-    @RequestMapping(path = "/usuarios/loginOld/", method = RequestMethod.GET)
-    public ResponseEntity<Usuario> loginToken(@RequestParam String usuario,
-            @RequestParam String senha) throws UnsupportedEncodingException {
-        
-        Usuario usuarioBanco = usuarioDAO.findByLogin(usuario);
+    @RequestMapping(path = "/login/", method = RequestMethod.POST)
+    public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws UnsupportedEncodingException {
+        Usuario usuarioBanco = usuarioDAO.findByLogin(login.getUsuario());
         if (usuarioBanco != null) {
-            boolean achou
-                    = PASSWORD_ENCODER.matches(senha, usuarioBanco.getSenha());
+            boolean achou = PASSWORD_ENCODER.matches(login.getSenha(), usuarioBanco.getSenha());
             if (achou) {
-
                 // aqui podemos fazer com chave publica e privada se quiser que fique mais seguro o token
                 Algorithm algorithm = Algorithm.HMAC512(SEGREDO);
                 Calendar agora = Calendar.getInstance();
@@ -250,7 +232,7 @@ public class UsuariosControle {
                         withExpiresAt(expira).
                         sign(algorithm);
                 HttpHeaders respHeaders = new HttpHeaders();
-                respHeaders.set("token", token);
+                respHeaders.set("Token", token);
                 return new ResponseEntity<>(usuarioBanco,
                         respHeaders, HttpStatus.OK);
             }

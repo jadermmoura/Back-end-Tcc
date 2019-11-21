@@ -27,8 +27,6 @@ import org.springframework.stereotype.Component;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
     
- 
-
     @Autowired
     MeuUserDetailsService detailsService;
     
@@ -46,7 +44,7 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 //o GET login pode ser acessado sem autenticação 
-                .antMatchers(HttpMethod.GET, "/api/usuarios/login/").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/usuarios/login/").permitAll()
                 // Caso o sistema permita o autocadastro                
                 .antMatchers(HttpMethod.POST, "/api/usuarios/").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/usuarios/aluno/").permitAll()
