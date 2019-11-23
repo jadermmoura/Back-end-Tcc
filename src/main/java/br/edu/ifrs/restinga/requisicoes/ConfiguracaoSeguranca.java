@@ -11,6 +11,7 @@ import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUserDetailsService;
 import br.edu.ifrs.restinga.requisicoes.controle.UsuariosControle;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,25 +23,31 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.stereotype.Component;
 
 
-@Component
+@Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
-    
+
     @Autowired
     MeuUserDetailsService detailsService;
-    
+
     @Autowired
     UsuarioDAO usuarioDAO;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth)
             throws Exception {
-        auth.userDetailsService(detailsService)
-                .passwordEncoder(UsuariosControle.PASSWORD_ENCODER);
+        auth
+                .inMemoryAuthentication()
+                .withUser("user")
+                .password("password")
+                .roles("USER")
+                .and()
+                .withUser("admin")
+                .password("admin1234")
+                .roles("USER", "ADMIN");
     }
 
-    @Override
+        @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 //o GET login pode ser acessado sem autenticação 
