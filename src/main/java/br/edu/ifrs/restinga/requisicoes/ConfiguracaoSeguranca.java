@@ -7,28 +7,21 @@ package br.edu.ifrs.restinga.requisicoes;
 
 
 import br.edu.ifrs.restinga.requisicoes.autenticacao.FiltroPorToken;
-import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUserDetailsService;
-import br.edu.ifrs.restinga.requisicoes.controle.UsuariosControle;
+//import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUserDetailsService;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 
 @Configuration
 @EnableWebSecurity
 public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    MeuUserDetailsService detailsService;
 
     @Autowired
     UsuarioDAO usuarioDAO;
