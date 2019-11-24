@@ -34,20 +34,6 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
     UsuarioDAO usuarioDAO;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth)
-            throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("user")
-                .password("password")
-                .roles("USER")
-                .and()
-                .withUser("admin")
-                .password("admin1234")
-                .roles("USER", "ADMIN");
-    }
-
-        @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 //o GET login pode ser acessado sem autenticação 

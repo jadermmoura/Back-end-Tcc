@@ -53,14 +53,11 @@ public class CursosControle {
     @PostMapping(path = "")
     public ResponseEntity<Curso> inserirCurso(@RequestBody Curso curso) {
         if (curso.getNome().isEmpty()) {
-            throw new RequisicaoInvalida("Você não pode inserir um curso sem número. ");
+            throw new RequisicaoInvalida("Você não pode inserir um curso sem nome. ");
         }
-        List<Curso> listaCursos = cursoDAO.findAll();
-        for (Curso lista : listaCursos) {
-            if (curso.getNome().equals(lista.getNome())) {
-                throw new RequisicaoInvalida("Não pode cadastrar o curso com o mesmo nome");
-
-            }
+        Curso cursoBanco = cursoDAO.findByNome(curso.getNome());
+        if (cursoBanco != null) {
+            throw new RequisicaoInvalida("Não pode cadastrar o curso com o mesmo nome");
         }
         Curso novoCurso = cursoDAO.save(curso);
         if (novoCurso != null) {

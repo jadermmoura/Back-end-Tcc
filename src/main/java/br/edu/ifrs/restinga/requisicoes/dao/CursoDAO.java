@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CursoDAO extends JpaRepository<Curso, Long> {
-
+   public Curso findByNome(String nome);
    public Optional<Curso> findAllById(long id);
     
 }
