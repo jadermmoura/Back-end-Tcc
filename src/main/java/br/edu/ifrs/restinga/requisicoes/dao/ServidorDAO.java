@@ -9,6 +9,5 @@ import br.edu.ifrs.restinga.requisicoes.modelo.Servidor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface ServidorDAO extends JpaRepository<Servidor, Long>{
-    
+public interface ServidorDAO extends JpaRepository<Servidor, Long>{  
 }

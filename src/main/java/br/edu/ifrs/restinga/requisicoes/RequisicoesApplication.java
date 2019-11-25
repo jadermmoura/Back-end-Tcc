@@ -27,6 +27,8 @@ public class RequisicoesApplication {
             usuario.setAtivo(true);
             ServidorDAO repository = ctx.getBean(ServidorDAO.class);
             repository.save(usuario);
+            
+           
 	}
 
 }
