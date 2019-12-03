@@ -1,6 +1,8 @@
 
 package br.edu.ifrs.restinga.requisicoes.controle;
 
+import br.edu.ifrs.restinga.requisicoes.ConfiguracaoSeguranca;
+import static br.edu.ifrs.restinga.requisicoes.ConfiguracaoSeguranca.PASSWORD_ENCODER;
 import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUser;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
@@ -23,8 +25,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,12 +35,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin
+//@CrossOrigin
 @RequestMapping(path = "/api/usuarios")
 public class UsuariosControle {
-    
-    public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
-    
+        
     @Autowired
     UsuarioDAO usuarioDAO;
     
@@ -90,11 +88,11 @@ public class UsuariosControle {
    // @PreAuthorize("hasAuthority('ensino')")
     @RequestMapping(path = "/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Usuario> listar(@AuthenticationPrincipal MeuUser usuarioAutenticado) {
-        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
+    public Iterable<Usuario> listar() {
+        //if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             return usuarioDAO.findAll();
-        }
-        throw new Proibido("não e permitido acessar dados de outros usuarios");
+        //}
+        //throw new Proibido("não e permitido acessar dados de outros usuarios");
     }
     
     //inserir ensino e professor
@@ -213,28 +211,37 @@ public class UsuariosControle {
        
     }   
     
-    // este seria o login por token que depois de um certo tempo precisa se logar novamente ao sistema
-    public static final String SEGREDO = "string grande ";
+ 
+   
     
     @RequestMapping(path = "/login/", method = RequestMethod.POST)
-    public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws UnsupportedEncodingException {
-        Usuario usuarioBanco = usuarioDAO.findByLogin(login.getUsuario());
+    public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws
+            UnsupportedEncodingException {
+        Usuario usuarios = login(login.getUsuario(), login.getSenha());
+        String  token = token(usuarios);
+        return ResponseEntity.ok().header("token", token).body(usuarios);
+    }
+     //METODO QUE PEGA O USUARIO E FAZ O TOKEN
+     public String token(Usuario usuario) throws UnsupportedEncodingException {
+        Algorithm algorithm = Algorithm.HMAC256(ConfiguracaoSeguranca.SEGREDO);
+        Calendar agora = Calendar.getInstance();
+        //ADICIONO OS MINUTOS QUE QUERO QUE O TOKEN FIQUE VALIDO DEPOIS DESTE TEMPO ELE EXPIRA
+        agora.add(Calendar.MINUTE, 15);
+        Date expira = agora.getTime();
+        String token = JWT.create()
+                .withClaim("id", usuario.getId()).
+                withExpiresAt(expira).
+                sign(algorithm);
+        return token;
+    }
+        //METODO QUE VERIFICA SE O LOGIN DO USUARIO ESTA CORRETO OU NÃO
+    public Usuario login(String login, String senha) {
+        Usuario usuarioBanco = usuarioDAO.findByLogin(login);
         if (usuarioBanco != null) {
-            boolean achou = PASSWORD_ENCODER.matches(login.getSenha(), usuarioBanco.getSenha());
-            if (achou) {
-                // aqui podemos fazer com chave publica e privada se quiser que fique mais seguro o token
-                Algorithm algorithm = Algorithm.HMAC512(SEGREDO);
-                Calendar agora = Calendar.getInstance();
-                agora.add(Calendar.MINUTE, 30);
-                Date expira = agora.getTime();
-                String token = JWT.create()
-                        .withClaim("id", usuarioBanco.getId()).
-                        withExpiresAt(expira).
-                        sign(algorithm);
-                HttpHeaders respHeaders = new HttpHeaders();
-                respHeaders.set("Token", token);
-                return new ResponseEntity<>(usuarioBanco,
-                        respHeaders, HttpStatus.OK);
+            boolean senhasIguais = ConfiguracaoSeguranca.PASSWORD_ENCODER.matches
+        (senha, usuarioBanco.getSenha());
+            if (senhasIguais) {
+                return usuarioBanco;
             }
         }
         throw new NaoEncontrado("Usuário e/ou senha incorreto(s)");
