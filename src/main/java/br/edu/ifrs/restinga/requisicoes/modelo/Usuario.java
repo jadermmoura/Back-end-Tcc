@@ -47,6 +47,8 @@ public abstract class Usuario implements Serializable {
     private String email;
     private String permissoes;
     private boolean ativo;
+    @Transient
+    private String token;
 
     public Long getId() {
         return id;
@@ -110,5 +112,13 @@ public abstract class Usuario implements Serializable {
 
     public void setNovaSenha(String novaSenha) {
         this.novaSenha = novaSenha;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

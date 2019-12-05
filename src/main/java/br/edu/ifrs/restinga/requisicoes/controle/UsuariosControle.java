@@ -211,37 +211,23 @@ public class UsuariosControle {
        
     }   
     
- 
-   
-    
-    @RequestMapping(path = "/login/", method = RequestMethod.POST)
-    public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws
-            UnsupportedEncodingException {
-        Usuario usuarios = login(login.getUsuario(), login.getSenha());
-        String  token = token(usuarios);
-        return ResponseEntity.ok().header("token", token).body(usuarios);
-    }
-     //METODO QUE PEGA O USUARIO E FAZ O TOKEN
-     public String token(Usuario usuario) throws UnsupportedEncodingException {
-        Algorithm algorithm = Algorithm.HMAC256(ConfiguracaoSeguranca.SEGREDO);
-        Calendar agora = Calendar.getInstance();
-        //ADICIONO OS MINUTOS QUE QUERO QUE O TOKEN FIQUE VALIDO DEPOIS DESTE TEMPO ELE EXPIRA
-        agora.add(Calendar.MINUTE, 15);
-        Date expira = agora.getTime();
-        String token = JWT.create()
-                .withClaim("id", usuario.getId()).
-                withExpiresAt(expira).
-                sign(algorithm);
-        return token;
-    }
-        //METODO QUE VERIFICA SE O LOGIN DO USUARIO ESTA CORRETO OU NÃO
-    public Usuario login(String login, String senha) {
-        Usuario usuarioBanco = usuarioDAO.findByLogin(login);
+    @RequestMapping(path = "/login", method = RequestMethod.POST)
+    public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws UnsupportedEncodingException {
+        Usuario usuarioBanco = usuarioDAO.findByLogin(login.getUsuario());
         if (usuarioBanco != null) {
-            boolean senhasIguais = ConfiguracaoSeguranca.PASSWORD_ENCODER.matches
-        (senha, usuarioBanco.getSenha());
-            if (senhasIguais) {
-                return usuarioBanco;
+            boolean achou = PASSWORD_ENCODER.matches(login.getSenha(), usuarioBanco.getSenha());
+            if (achou) {
+                // aqui podemos fazer com chave publica e privada se quiser que fique mais seguro o token
+                Algorithm algorithm = Algorithm.HMAC512(ConfiguracaoSeguranca.SEGREDO);
+                Calendar agora = Calendar.getInstance();
+                agora.add(Calendar.MINUTE, 30);
+                Date expira = agora.getTime();
+                String token = JWT.create()
+                        .withClaim("id", usuarioBanco.getId()).
+                        withExpiresAt(expira).
+                        sign(algorithm);
+                usuarioBanco.setToken(token);
+                return new ResponseEntity<>( usuarioBanco, HttpStatus.OK);
             }
         }
         throw new NaoEncontrado("Usuário e/ou senha incorreto(s)");

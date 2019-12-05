@@ -5,12 +5,10 @@
  */
 package br.edu.ifrs.restinga.requisicoes;
 
-
 import br.edu.ifrs.restinga.requisicoes.autenticacao.FiltroPorToken;
 //import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUserDetailsService;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 
@@ -35,17 +33,17 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-          http.authorizeRequests()
-                //o GET login pode ser acessado sem autenticação 
-                .antMatchers(HttpMethod.GET, "/api/usuarios/").permitAll()
-                // permite o acesso somente se autenticado
-                .antMatchers("/api/**").authenticated()
-                .and().httpBasic()
-                 .and().
-                addFilterBefore(new  FiltroPorToken(usuarioDAO), UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement()
+        http
+            .addFilterBefore(
+                new  FiltroPorToken(usuarioDAO)
+                , BasicAuthenticationFilter.class
+            )
+            .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().csrf().disable();
+                .and()
+            .csrf().disable()
+            .authorizeRequests()
+                .antMatchers("/api/usuarios/login").permitAll()
+                .anyRequest().authenticated();
     }
-
 }
