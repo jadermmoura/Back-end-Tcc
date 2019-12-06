@@ -30,15 +30,22 @@ public class FiltroPorToken
     protected void doFilterInternal(HttpServletRequest request, 
             HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-         String token = request.getHeader("token");
+        String token;
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            token = header.substring(7);
+        } else {
+            token = request.getParameter("token");
+        }
         if (token != null && !token.isEmpty()) {
-            Algorithm algorithm = Algorithm.HMAC256(ConfiguracaoSeguranca.SEGREDO);
+            Algorithm algorithm = Algorithm.HMAC512(ConfiguracaoSeguranca.SEGREDO);
             DecodedJWT decode = JWT.require(algorithm).build().verify(token);
             Integer id = decode.getClaim("id").asInt();
             Usuario usuario = usuarioDAO.findById(id).get();
             MeuUser usuarioAut = new MeuUser(usuario);
-            UsernamePasswordAuthenticationToken authToken
-                    = new UsernamePasswordAuthenticationToken(usuarioAut, null, usuarioAut.getAuthorities());
+            UsernamePasswordAuthenticationToken authToken = 
+                    new UsernamePasswordAuthenticationToken(usuarioAut
+                            , null, usuarioAut.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
         chain.doFilter(request, response);
