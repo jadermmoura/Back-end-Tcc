@@ -12,8 +12,6 @@ import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import br.edu.ifrs.restinga.requisicoes.modelo.Curso;
 import br.edu.ifrs.restinga.requisicoes.modelo.Disciplina;
-import java.util.Iterator;
-
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -77,14 +77,20 @@ public class CursosControle {
         }
     }
 
+    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Curso> editarCurso(@RequestBody Curso novoCurso, @PathVariable long id) {
         Curso curso = this.carregarCurso(id).getBody();
         if (novoCurso.getNome() != null) {
             curso.setNome(novoCurso.getNome());
+            return new ResponseEntity<>(cursoDAO.save(curso), HttpStatus.NO_CONTENT);
+        } else {
+            throw new NaoEncontrado("curso não encontrado");
         }
-        return new ResponseEntity<>(curso, HttpStatus.NO_CONTENT);
     }
 
+    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Curso> apagarCurso(@PathVariable long id) {
         if (cursoDAO.existsById(id)) {
             cursoDAO.deleteById(id);
