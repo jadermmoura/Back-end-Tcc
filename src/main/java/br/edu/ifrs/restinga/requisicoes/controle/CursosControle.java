@@ -39,7 +39,10 @@ public class CursosControle {
 
     @Autowired
     DisciplinaDAO disciplinaDAO;
-
+//jader
+    
+    
+    
     // CURSOS  
     @GetMapping(path = "")
     public ResponseEntity<?> listar() {
