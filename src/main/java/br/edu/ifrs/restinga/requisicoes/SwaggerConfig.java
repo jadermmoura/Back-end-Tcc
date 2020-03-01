@@ -34,8 +34,8 @@ public class SwaggerConfig {
                 "Sistema desenvolvido com o intuito de automatizar os processos de pedido de requisições de aproveitamento de estudos e certificação, desenvolvido na disciplina de Desenvolvimento de Sistemas II, em parceria com o Campos Restinga.",
                 "1.0",
                 "Terms of Service",
-                new Contact("Repos do Projeo: ", "\n\n https://github.com/DCommicsBP/sistema-certificacao-aproveitamento, \n\n https://github.com/VictorSilva97/ifrs-dev2-sistema-certificacao-aproveitamento-front  ",
-                        "dayonne.p@gmail.com, vic"),
+                new Contact("Repos do Projeo: ", "\n\n https://github.com/jadermmoura/ifrs-dev2-sistema-certificacao-aproveitamento-front, \n\n https://github.com/jadermmoura/ifrs-dev2-sistema-certificacao-aproveitamento-front  ",
+                        "jader.mmoura@gmail.com"),
                 
                 "Apache License Version 2.0",
 
