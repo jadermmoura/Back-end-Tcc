@@ -167,7 +167,6 @@ public class UsuariosControle {
                 usuarioAntigo.setPermissoes(usuario.getPermissoes());
                 usuarioAntigo.setAtivo(usuario.isAtivo());
                 //fiz esses if para saber em que estancia esta a classe e atualizar campos especificos de cada classe
-                //feito potr joao
                 if (usuarioAntigo instanceof Servidor) {
                     if (usuario instanceof Servidor) {
                         ((Servidor) usuarioAntigo).setCargo(((Servidor) usuario).getCargo());
