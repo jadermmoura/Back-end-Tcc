@@ -208,7 +208,7 @@ public class UsuariosControle {
         throw new Proibido("não e permitido apagar outros usuários");
        
     }   
-    
+    //ddwsd
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws UnsupportedEncodingException {
         Usuario usuarioBanco = usuarioDAO.findByLogin(login.getUsuario());
