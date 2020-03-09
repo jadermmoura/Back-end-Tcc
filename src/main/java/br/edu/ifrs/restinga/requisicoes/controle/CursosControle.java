@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @CrossOrigin
@@ -141,5 +142,12 @@ public class CursosControle {
         }
         disciplinaDAO.save(d);
         return null;
+    }
+    
+ 
+    @RequestMapping(path = "/pesquisar/nome/{nome}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Curso buscarNome(@PathVariable("nome") String nome) {
+        return cursoDAO.findByNome(nome);
     }
 }
