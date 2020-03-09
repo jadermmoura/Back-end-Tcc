@@ -9,6 +9,7 @@ import br.edu.ifrs.restinga.requisicoes.autenticacao.FiltroPorToken;
 //import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUserDetailsService;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,6 +45,8 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
             .csrf().disable()
             .authorizeRequests()
                 .antMatchers("/api/usuarios/login").permitAll()
-                .anyRequest().authenticated();
+                .antMatchers(HttpMethod.POST, "/").permitAll()
+                .antMatchers(HttpMethod.GET, "/").permitAll();
+//                .anyRequest().authenticated();
     }
 }
