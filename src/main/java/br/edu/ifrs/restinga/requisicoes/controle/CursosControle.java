@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
@@ -121,33 +122,51 @@ public class CursosControle {
     }
 
     @GetMapping(path = "/{id}/disciplinas/{idDisciplina}")
-    public ResponseEntity<Disciplina> carregarDisciplina(@PathVariable long id, @PathVariable long idDisciplina) {
-        Optional<Disciplina> d = disciplinaDAO.findById(idDisciplina);
-        if (d.isPresent()) {
-            return new ResponseEntity<>(d.get(), HttpStatus.OK);
+    public String carregarDisciplina(@PathVariable long id, @PathVariable long idDisciplina) {
+        Optional<Curso> c = cursoDAO.findById(id);
+        List<Disciplina> d = disciplinaDAO.findAll();
+        if (c.isPresent()) {
+            if (c.get().getId() == id) {
+                for (Disciplina disciplina : d) {
+                    if (disciplina.getId() == idDisciplina) {
+                        return disciplina.getNome();
+                    }
+                }
+                        throw new RequisicaoInvalida("Disciplina não localizada");
+            }
         }
-        throw new RequisicaoInvalida("Não foi possível encontrar a disciplina requisitada.");
+        return ("Curso não localizado");
     }
 
-    @PatchMapping(path = "/{id}/disciplinas/{idDisciplina}")
-    public ResponseEntity<Disciplina> atualizarDisciplina(@PathVariable long id, @PathVariable long idDisciplina, @RequestBody Disciplina novaDisciplina) {
-        Curso curso = this.carregarCurso(id).getBody();
-        Disciplina d = this.carregarDisciplina(id, idDisciplina).getBody();
-
-        if (novaDisciplina.getCargaHoraria() > 0) {
-            d.setCargaHoraria(0);
+    @DeleteMapping(path = "/{id}/disciplinas/{idDisciplina}")
+    public void deletarDisciplina(@PathVariable long id, @PathVariable long idDisciplina) {
+        
+        List<Disciplina> disciplina = disciplinaDAO.findAll();
+        for (Disciplina disciplina1 : disciplina) {
+            if (disciplina1.getId() == idDisciplina) {
+                disciplina.remove(disciplina1);
+            }
         }
-        if (!novaDisciplina.getNome().isEmpty()) {
-            d.setNome(novaDisciplina.getNome());
-        }
-        disciplinaDAO.save(d);
-        return null;
+        
     }
-    
- 
+
     @RequestMapping(path = "/pesquisar/nome/{nome}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Curso buscarNome(@PathVariable("nome") String nome) {
         return cursoDAO.findByNome(nome);
     }
+//    @PatchMapping(path = "/{id}/disciplinas/{idDisciplina}")
+//    public ResponseEntity<Disciplina> atualizarDisciplina(@PathVariable long id, @PathVariable long idDisciplina, @RequestBody Disciplina novaDisciplina) {
+//        Curso curso = this.carregarCurso(id).getBody();
+//        Disciplina d = this.carregarDisciplina(id, idDisciplina).getBody();
+//        
+//        if (novaDisciplina.getCargaHoraria() > 0) {
+//            d.setCargaHoraria(0);
+//        }
+//        if (!novaDisciplina.getNome().isEmpty()) {
+//            d.setNome(novaDisciplina.getNome());
+//        }
+//        disciplinaDAO.save(d);
+//        return null;
+//    }
 }
