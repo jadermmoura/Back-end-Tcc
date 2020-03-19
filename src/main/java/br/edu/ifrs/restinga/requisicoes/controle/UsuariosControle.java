@@ -1,4 +1,3 @@
-
 package br.edu.ifrs.restinga.requisicoes.controle;
 
 import br.edu.ifrs.restinga.requisicoes.ConfiguracaoSeguranca;
@@ -37,43 +36,43 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin
 @RequestMapping(path = "/api/usuarios")
 public class UsuariosControle {
-        
+
     @Autowired
     UsuarioDAO usuarioDAO;
-    
+
     private void validaUsuario(Usuario u) {
-        
-        if (u.getEmail() == null || u.getEmail().isEmpty()) {
-            throw new RequisicaoInvalida("email é obrigatórios");
-        }
-        if (u.getLogin() == null || u.getLogin().isEmpty()) {
-            throw new RequisicaoInvalida("login é obrigatórios");
-        }
-        if (u.getNome() == null || u.getNome().isEmpty()) {
-            throw new RequisicaoInvalida("nome é obrigatórios");
-        }
-        
-        if (u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
-            throw new RequisicaoInvalida("permissão é obrigatórios");
-        }
+
+//        if (u.getEmail() == null || u.getEmail().isEmpty()) {
+//            throw new RequisicaoInvalida("email é obrigatórios");
+//        }
+//        if (u.getLogin() == null || u.getLogin().isEmpty()) {
+//            throw new RequisicaoInvalida("login é obrigatórios");
+//        }
+//        if (u.getNome() == null || u.getNome().isEmpty()) {
+//            throw new RequisicaoInvalida("nome é obrigatórios");
+//        }
+
+//        if (u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
+//            throw new RequisicaoInvalida("permissão é obrigatórios");
+//        }
         if (u instanceof Aluno) {
-            if (((Aluno) u).getDataIngresso() == null ) {
+            if (((Aluno) u).getDataIngresso() == null) {
                 throw new RequisicaoInvalida("o campo data é obrigatórios");
             }
             if (((Aluno) u).getMatricula() <= 0) {
                 throw new RequisicaoInvalida("matricula é obrigatórios");
             }
-        } 
+        }
         if (u instanceof Servidor) {
-            if (((Servidor) u).getCargo() == null || ((Servidor) u).getCargo().isEmpty()) {
-                throw new RequisicaoInvalida("cargo é obrigatórios");
-            }
+//            if (((Servidor) u).getCargo() == null || ((Servidor) u).getCargo().isEmpty()) {
+//                throw new RequisicaoInvalida("cargo é obrigatórios");
+//            }
             if (((Servidor) u).getSiape() <= 0) {
                 throw new RequisicaoInvalida("siape é obrigatórios");
             }
-         }
+        }
         if (u instanceof Professor) {
-            if (((Professor) u).getSiape() <=0) {
+            if (((Professor) u).getSiape() <= 0) {
                 throw new RequisicaoInvalida("siape é obrigatórios");
             }
         }
@@ -82,32 +81,29 @@ public class UsuariosControle {
 
 
 
-   // @PreAuthorize("hasAuthority('ensino')")
+    // @PreAuthorize("hasAuthority('ensino')")
     @RequestMapping(path = "/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Usuario> listar() {
         //if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
-            return usuarioDAO.findAll();
+        return usuarioDAO.findAll();
         //}
         //throw new Proibido("não e permitido acessar dados de outros usuarios");
     }
-    
+
     //inserir ensino e professor
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario inserirEnsinoProfessor(@RequestBody Usuario usuario){
+    public Usuario inserirEnsinoProfessor(@RequestBody Usuario usuario) {
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
         Usuario usuarioBanco = usuarioDAO.findByLogin(usuario.getLogin());
-        if (usuarioBanco != null) {
-            throw new RequisicaoInvalida("este login ja existe");
-        }
-        validaUsuario(usuario);
-        if (usuario instanceof Aluno) {
-           throw new Proibido("não e permitido adicionar um aluno");
-        }else if(!usuario.getPermissoes().contains("aluno")){
-            return usuarioDAO.save(usuario);
-        }
-        throw new Proibido("não e permitido adicionar um aluno");
+        usuario.setPermissoes("servidor");
+//        validaUsuario(usuario);
+//        if (usuarioBanco != null) {
+//            throw new RequisicaoInvalida("este login ja existe");
+//        } else {
+//        }
+        return usuarioDAO.save(usuario);
     }
 
     //inserir aluno
@@ -125,7 +121,7 @@ public class UsuariosControle {
             throw new Proibido("não e permitido adicionar um servidor");
         }
         if (usuario instanceof Professor) {
-           throw new Proibido("não e permitido adicionar um professor");
+            throw new Proibido("não e permitido adicionar um professor");
         }
         return usuarioDAO.save(usuario);
     }
@@ -144,19 +140,19 @@ public class UsuariosControle {
             }
         }
         throw new Proibido("não e permitido acessar dados de outros usuarios");
-        
+
     }
 
     // atualizar os usuarios
     @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
     public Usuario atualizar(@AuthenticationPrincipal MeuUser usuarioAutenticado,
-        @PathVariable long id, @RequestBody Usuario usuario) {
+            @PathVariable long id, @RequestBody Usuario usuario) {
         validaUsuario(usuario);
-        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino") 
+        if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")
                 || usuarioAutenticado.getUsuario().getId() == id) {
             if (usuarioDAO.existsById(id)) {
-                
+
                 Usuario usuarioAntigo = recuperar(usuarioAutenticado, id);
                 usuarioAntigo.setNome(usuario.getNome());
                 usuarioAntigo.setLogin(usuario.getLogin());
@@ -170,7 +166,7 @@ public class UsuariosControle {
                         ((Servidor) usuarioAntigo).setCargo(((Servidor) usuario).getCargo());
                         ((Servidor) usuarioAntigo).setSiape(((Servidor) usuario).getSiape());
                     }
-                    
+
                 }
                 if (usuarioAntigo instanceof Aluno) {
                     if (usuario instanceof Aluno) {
@@ -191,22 +187,21 @@ public class UsuariosControle {
         }
         throw new Proibido(" não e permitido alterar dados de outros usuarios");
     }
-    
+
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public List<Usuario> apagar(@AuthenticationPrincipal MeuUser usuarioAutenticado,@PathVariable long id) {
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             if (usuarioDAO.existsById(id)) {
                 usuarioDAO.deleteById(id);
-               return usuarioDAO.findAll();
+                return usuarioDAO.findAll();
             } else {
                 throw new NaoEncontrado("USUÁRIO não encontrado");
             }
         }
         throw new Proibido("não e permitido apagar outros usuários");
-       
-    }   
-    //ddwsd
+
+    }
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws UnsupportedEncodingException {
         Usuario usuarioBanco = usuarioDAO.findByLogin(login.getUsuario());
