@@ -52,9 +52,7 @@ public class UsuariosControle {
         if (u.getNome() == null || u.getNome().isEmpty()) {
             throw new RequisicaoInvalida("nome é obrigatórios");
         }
-        if (u.getNovaSenha() == null || u.getNovaSenha().isEmpty()) {
-            throw new RequisicaoInvalida("senha e obrigatorio é obrigatórios");
-        }
+        
         if (u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
             throw new RequisicaoInvalida("permissão é obrigatórios");
         }

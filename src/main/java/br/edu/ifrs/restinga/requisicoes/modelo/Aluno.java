@@ -17,7 +17,7 @@ public class Aluno extends Usuario implements Serializable{
     @JsonProperty("tipo")
     private final String tipo = "aluno";
     private int matricula; 
-    @JsonFormat(pattern = "dd/MM/yyyy")
+//    @JsonFormat(pattern = "dd/MM/YYYY/")
     @Temporal(TemporalType.DATE)
     private Date dataIngresso;
     public int getMatricula() {
