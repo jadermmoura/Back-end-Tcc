@@ -13,7 +13,6 @@ import javax.persistence.TemporalType;
 public class Aluno extends Usuario implements Serializable{
 
     @Transient
-     // Define o campo
     @JsonProperty("tipo")
     private final String tipo = "aluno";
     private int matricula; 

@@ -3,6 +3,7 @@ package br.edu.ifrs.restinga.requisicoes.controle;
 import br.edu.ifrs.restinga.requisicoes.ConfiguracaoSeguranca;
 import static br.edu.ifrs.restinga.requisicoes.ConfiguracaoSeguranca.PASSWORD_ENCODER;
 import br.edu.ifrs.restinga.requisicoes.autenticacao.MeuUser;
+import br.edu.ifrs.restinga.requisicoes.dao.AlunoDAO;
 import br.edu.ifrs.restinga.requisicoes.dao.UsuarioDAO;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.Proibido;
@@ -39,6 +40,8 @@ public class UsuariosControle {
 
     @Autowired
     UsuarioDAO usuarioDAO;
+    
+    AlunoDAO alunoDAO;
 
     private void validaUsuario(Usuario u) {
 
@@ -77,6 +80,13 @@ public class UsuariosControle {
             }
         }
     }
+     @RequestMapping(path = "/alunos/", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Aluno> listarAlunos() {
+        return alunoDAO.findAll();
+    }
+    
+    
 ///////////// LISTAR USUÁRIOS ////////////////////////       
 
 
