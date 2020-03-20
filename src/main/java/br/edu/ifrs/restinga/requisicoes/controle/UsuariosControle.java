@@ -41,8 +41,9 @@ public class UsuariosControle {
     @Autowired
     UsuarioDAO usuarioDAO;
     
+    @Autowired
     AlunoDAO alunoDAO;
-
+    
     private void validaUsuario(Usuario u) {
 
 //        if (u.getEmail() == null || u.getEmail().isEmpty()) {
@@ -85,7 +86,7 @@ public class UsuariosControle {
     public Iterable<Aluno> listarAlunos() {
         return alunoDAO.findAll();
     }
-    
+ 
     
 ///////////// LISTAR USUÁRIOS ////////////////////////       
 
