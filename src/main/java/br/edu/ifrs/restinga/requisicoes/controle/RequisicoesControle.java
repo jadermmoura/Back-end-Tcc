@@ -114,7 +114,7 @@ public class RequisicoesControle {
     public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
         requisicao.setDataRequisicao(horaSistema());
         validaRequisicao(requisicao);
-
+        
         Requisicao novaRequisicao = rDao.save(requisicao);
 
         if (novaRequisicao != null) {

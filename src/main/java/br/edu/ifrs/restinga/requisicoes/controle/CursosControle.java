@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @CrossOrigin
@@ -98,6 +96,11 @@ public class CursosControle {
     }
 
     // DISCIPLINAS
+    @GetMapping("/disciplinas")
+    public List<Disciplina> listarTodasDisciplinas() {
+        return disciplinaDAO.findAll();
+    }
+
     @GetMapping(path = "/{id}/disciplinas")
     public ResponseEntity<List<Disciplina>> listarDisciplinaPorCurso(@PathVariable long id) {
         Curso curso = this.carregarCurso(id).getBody();
@@ -132,22 +135,10 @@ public class CursosControle {
                         return disciplina.getNome();
                     }
                 }
-                        throw new RequisicaoInvalida("Disciplina não localizada");
+                throw new RequisicaoInvalida("Disciplina não localizada");
             }
         }
         return ("Curso não localizado");
-    }
-
-    @DeleteMapping(path = "/{id}/disciplinas/{idDisciplina}")
-    public void deletarDisciplina(@PathVariable long id, @PathVariable long idDisciplina) {
-        
-        List<Disciplina> disciplina = disciplinaDAO.findAll();
-        for (Disciplina disciplina1 : disciplina) {
-            if (disciplina1.getId() == idDisciplina) {
-                disciplina.remove(disciplina1);
-            }
-        }
-        
     }
 
     @RequestMapping(path = "/pesquisar/nome/{nome}", method = RequestMethod.GET)
@@ -155,18 +146,19 @@ public class CursosControle {
     public Curso buscarNome(@PathVariable("nome") String nome) {
         return cursoDAO.findByNome(nome);
     }
-//    @PatchMapping(path = "/{id}/disciplinas/{idDisciplina}")
-//    public ResponseEntity<Disciplina> atualizarDisciplina(@PathVariable long id, @PathVariable long idDisciplina, @RequestBody Disciplina novaDisciplina) {
+
+//    Não esta funcionando
+//    @DeleteMapping(path = "/{id}/disciplinas/{idDisciplina}")
+//    public void apagar(@PathVariable long id, @PathVariable long idDisciplina) {
 //        Curso curso = this.carregarCurso(id).getBody();
-//        Disciplina d = this.carregarDisciplina(id, idDisciplina).getBody();
-//        
-//        if (novaDisciplina.getCargaHoraria() > 0) {
-//            d.setCargaHoraria(0);
+//        List<Disciplina> disciplina = disciplinaDAO.findAll();
+//        List<Disciplina> disciplinaNova = disciplinaDAO.findAll();
+//
+//        for (Disciplina disciplina1 : disciplina) {
+//            if (idDisciplina == disciplina1.getId()) {
+//                disciplinaNova.remove(disciplina1);
+//            }
 //        }
-//        if (!novaDisciplina.getNome().isEmpty()) {
-//            d.setNome(novaDisciplina.getNome());
-//        }
-//        disciplinaDAO.save(d);
-//        return null;
+//      cursoDAO.save(curso);
 //    }
 }
