@@ -76,6 +76,9 @@ public class CursosControle {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Curso> editarCurso(@RequestBody Curso novoCurso, @PathVariable long id) {
         Curso curso = this.carregarCurso(id).getBody();
+         if (curso.getNome().isEmpty()) {
+            throw new RequisicaoInvalida("Você não pode inserir um curso sem nome. ");
+        }
         if (novoCurso.getNome() != null) {
             curso.setNome(novoCurso.getNome());
             return new ResponseEntity<>(cursoDAO.save(curso), HttpStatus.NO_CONTENT);

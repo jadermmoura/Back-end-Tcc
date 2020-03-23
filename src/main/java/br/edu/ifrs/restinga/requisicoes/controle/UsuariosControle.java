@@ -46,16 +46,15 @@ public class UsuariosControle {
     
     private void validaUsuario(Usuario u) {
 
-//        if (u.getEmail() == null || u.getEmail().isEmpty()) {
-//            throw new RequisicaoInvalida("email é obrigatórios");
-//        }
-//        if (u.getLogin() == null || u.getLogin().isEmpty()) {
-//            throw new RequisicaoInvalida("login é obrigatórios");
-//        }
-//        if (u.getNome() == null || u.getNome().isEmpty()) {
-//            throw new RequisicaoInvalida("nome é obrigatórios");
-//        }
-
+        if (u.getEmail() == null || u.getEmail().isEmpty()) {
+            throw new RequisicaoInvalida("email é obrigatórios");
+        }
+        if (u.getLogin() == null || u.getLogin().isEmpty()) {
+            throw new RequisicaoInvalida("login é obrigatórios");
+        }
+        if (u.getNome() == null || u.getNome().isEmpty()) {
+            throw new RequisicaoInvalida("nome é obrigatórios");
+        }
 //        if (u.getPermissoes() == null || u.getPermissoes().isEmpty()) {
 //            throw new RequisicaoInvalida("permissão é obrigatórios");
 //        }
@@ -68,9 +67,9 @@ public class UsuariosControle {
             }
         }
         if (u instanceof Servidor) {
-//            if (((Servidor) u).getCargo() == null || ((Servidor) u).getCargo().isEmpty()) {
-//                throw new RequisicaoInvalida("cargo é obrigatórios");
-//            }
+            if (((Servidor) u).getCargo() == null || ((Servidor) u).getCargo().isEmpty()) {
+                throw new RequisicaoInvalida("cargo é obrigatórios");
+            }
             if (((Servidor) u).getSiape() <= 0) {
                 throw new RequisicaoInvalida("siape é obrigatórios");
             }
@@ -109,12 +108,13 @@ public class UsuariosControle {
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
         Usuario usuarioBanco = usuarioDAO.findByLogin(usuario.getLogin());
         usuario.setPermissoes("servidor");
-//        validaUsuario(usuario);
-//        if (usuarioBanco != null) {
-//            throw new RequisicaoInvalida("este login ja existe");
-//        } else {
-//        }
+        
+        validaUsuario(usuario);
+        if (usuarioBanco != null) {
+            throw new RequisicaoInvalida("este login ja existe");
+        } else {
         return usuarioDAO.save(usuario);
+        }
     }
 
     //inserir aluno
