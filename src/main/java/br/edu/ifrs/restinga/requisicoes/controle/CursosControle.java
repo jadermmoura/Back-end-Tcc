@@ -116,7 +116,7 @@ public class CursosControle {
     @PostMapping(path = "/{id}/disciplinas")
     public ResponseEntity<Disciplina> novaDisciplina(@RequestBody Disciplina disciplina, @PathVariable long id) {
         Curso curso = this.carregarCurso(id).getBody();
-        if (disciplina.getCargaHoraria() <= 0) {
+        if (disciplina.getCargaHoraria() < 15) {
             throw new RequisicaoInvalida("Você não pode inserir uma disciplina com carga horária igual ou menor que zero. ");
         }
         if (disciplina.getNome().isEmpty()) {
