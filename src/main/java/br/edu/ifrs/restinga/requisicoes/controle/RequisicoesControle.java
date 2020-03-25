@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
+import java.util.Iterator;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 @CrossOrigin
@@ -114,7 +117,7 @@ public class RequisicoesControle {
     public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
         requisicao.setDataRequisicao(horaSistema());
         validaRequisicao(requisicao);
-        
+
         Requisicao novaRequisicao = rDao.save(requisicao);
 
         if (novaRequisicao != null) {
@@ -133,6 +136,7 @@ public class RequisicoesControle {
             throw new RequisicaoInvalida("Digite uma data valida");
         }
     }
+
     /*
      * 1. Por disciplina 2. Por periodos 3. Por aluno 4. Por professor responsável
      */
@@ -143,10 +147,10 @@ public class RequisicoesControle {
             listaRequisicao = rDao.findByDisciplinaSolicitada(dDao.findById(id).get());
             if (listaRequisicao == null) {
                 throw new NaoEncontrado("Não foi possível achar registro contendo a disciplina especificada.");
-            }else{
+            } else {
                 return listaRequisicao;
             }
-        }else{
+        } else {
             throw new NaoEncontrado("O usuário não tem permissão de ensino. ");
         }
     }
@@ -203,14 +207,29 @@ public class RequisicoesControle {
             Optional<Usuario> professor = uDao.findById(idProfessor);
             if (professor.isPresent()) {
                 Iterable<Requisicao> requisicoes = rDao.findByUsuario(professor.get());
-                if(requisicoes != null)
+                if (requisicoes != null) {
                     return requisicoes;
-                else
-                    throw  new NaoEncontrado("Não foi possível encontrar requisição");
+                } else {
+                    throw new NaoEncontrado("Não foi possível encontrar requisição");
+                }
             }
             throw new NaoEncontrado("Não foi possível encontrar as requisições atreladas a esse professor. ");
         } else {
             throw new NaoEncontrado("O ID fornecido ou o requerente não tem permissão para listar.");
         }
     }
+
+    @RequestMapping(path = "/nome/{nome}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Requisicao> buscarNomeDisciplina(@PathVariable("nome") String nome) {
+        Iterable<Requisicao> listaRequisicao = rDao.findAll();
+        List nova = new ArrayList();
+        for (Requisicao requisicao : listaRequisicao) {
+            if (requisicao.getDisciplinaSolicitada().getNome().equals(nome)) {
+                nova.add(requisicao);
+            }
+        }
+        return nova;
+    }
+
 }
