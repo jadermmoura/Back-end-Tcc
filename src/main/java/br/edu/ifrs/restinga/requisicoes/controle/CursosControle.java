@@ -7,6 +7,7 @@ import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import br.edu.ifrs.restinga.requisicoes.modelo.Curso;
 import br.edu.ifrs.restinga.requisicoes.modelo.Disciplina;
+import java.util.ArrayList;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.function.Consumer;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
@@ -151,17 +153,13 @@ public class CursosControle {
     }
 
 //    Não esta funcionando
-//    @DeleteMapping(path = "/{id}/disciplinas/{idDisciplina}")
-//    public void apagar(@PathVariable long id, @PathVariable long idDisciplina) {
-//        Curso curso = this.carregarCurso(id).getBody();
-//        List<Disciplina> disciplina = disciplinaDAO.findAll();
-//        List<Disciplina> disciplinaNova = disciplinaDAO.findAll();
-//
-//        for (Disciplina disciplina1 : disciplina) {
-//            if (idDisciplina == disciplina1.getId()) {
-//                disciplinaNova.remove(disciplina1);
-//            }
-//        }
-//      cursoDAO.save(curso);
-//    }
+    @DeleteMapping(path = "/{id}/disciplinas/{idDisciplina}")
+    public void apagar(@PathVariable long id, @PathVariable long idDisciplina) {
+        Curso curso = this.carregarCurso(id).getBody();
+        List<Disciplina> disciplinas = disciplinaDAO.findAll();
+        disciplinas.forEach((Disciplina t) -> {
+            if(t.getId() == idDisciplina) curso.getDisciplinas().remove(t);
+        });
+      cursoDAO.save(curso);
+    }
 }
