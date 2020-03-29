@@ -112,6 +112,12 @@ public class RequisicoesControle {
         Iterable<Requisicao> r = rDao.findAll();
         return new ResponseEntity<>(r, HttpStatus.OK);
     }
+    
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<?> listarRequisicao(@PathVariable Long id) {
+        Requisicao requi = rDao.findById(id).get();
+        return new ResponseEntity<>(requi, HttpStatus.OK);
+    }
 
     @PostMapping(path = "/")
     public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
