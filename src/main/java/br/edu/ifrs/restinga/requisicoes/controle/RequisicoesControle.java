@@ -24,6 +24,7 @@ import br.edu.ifrs.restinga.requisicoes.erros.ErroServidor;
 import br.edu.ifrs.restinga.requisicoes.erros.NaoEncontrado;
 import br.edu.ifrs.restinga.requisicoes.erros.RequisicaoInvalida;
 import java.util.Iterator;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -112,7 +113,7 @@ public class RequisicoesControle {
         Iterable<Requisicao> r = rDao.findAll();
         return new ResponseEntity<>(r, HttpStatus.OK);
     }
-    
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> listarRequisicao(@PathVariable Long id) {
         Requisicao requi = rDao.findById(id).get();
@@ -122,16 +123,25 @@ public class RequisicoesControle {
     @PostMapping(path = "/")
     public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
         requisicao.setDataRequisicao(horaSistema());
+        requisicao.setDeferido("Em análise");
         validaRequisicao(requisicao);
-
         Requisicao novaRequisicao = rDao.save(requisicao);
-
+        System.out.println(novaRequisicao);
         if (novaRequisicao != null) {
             return new ResponseEntity<>(novaRequisicao, HttpStatus.CREATED);
         }
         throw new ErroServidor("Não foi possivel salvar a requisição");
     }
 
+
+    @RequestMapping(path = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Requisicao> editarRequisicao(@RequestBody Requisicao novaRequisicao, @PathVariable long id) {
+        Requisicao requi = (Requisicao) this.listarRequisicao(id).getBody();
+        requi.setDeferido(novaRequisicao.getDeferido());
+        requi.setParecer(novaRequisicao.getParecer());
+         return new ResponseEntity<>(rDao.save(requi), HttpStatus.OK);
+    }
     @GetMapping(path = "/requisicaoPorPeriodo/")
     public Iterable<Requisicao> pesquisaPorPeriodo(
             @RequestParam(required = false) Date inicio,
@@ -142,10 +152,6 @@ public class RequisicoesControle {
             throw new RequisicaoInvalida("Digite uma data valida");
         }
     }
-
-    /*
-     * 1. Por disciplina 2. Por periodos 3. Por aluno 4. Por professor responsável
-     */
     @GetMapping("/busca-requisicao-pela-disciplina/{id}")
     public Iterable<Requisicao> requisicaoPorDisciplina(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable Long id) {
         Iterable<Requisicao> listaRequisicao = new ArrayList<>();

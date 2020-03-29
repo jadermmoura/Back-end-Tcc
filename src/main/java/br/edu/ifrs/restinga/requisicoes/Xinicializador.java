@@ -22,14 +22,13 @@ public class Xinicializador {
     UsuarioDAO usuarioDAO;
     @Autowired
     ServidorDAO servidorDAO;
-    // Executa o método logo após a aplicação spring inicializar por completo 
     @PostConstruct
     public void init() {
-        Usuario usuarios = usuarioDAO.findByLogin("admin");
+        Usuario usuarios = usuarioDAO.findByLogin("root");
         if (usuarios == null) {
             Servidor usuario = new Servidor();
             usuario.setNome("admin");
-            usuario.setLogin("admin");
+            usuario.setLogin("root");
             usuario.setSenha(PASSWORD_ENCODER.encode("12345"));
             usuario.setEmail("admin@admin");
             usuario.setPermissoes("ensino");
@@ -37,7 +36,6 @@ public class Xinicializador {
             usuario.setCargo("servidor");
             usuario.setAtivo(true);
             servidorDAO.save(usuario);
-        //coloca um usuario inicial no banco quando iniciar a aplicação
         }
           
         

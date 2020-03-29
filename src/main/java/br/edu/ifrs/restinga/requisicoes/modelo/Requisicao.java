@@ -64,9 +64,9 @@ public abstract class Requisicao implements Serializable {
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     private Date dataRequisicao;
-    
+     
     private String parecer;
-    private boolean deferido;
+    private String deferido ;
             
     @ManyToOne
     private Disciplina disciplinaSolicitada;
@@ -98,16 +98,16 @@ public abstract class Requisicao implements Serializable {
         return parecer;	
     }
 
+    public void setDeferido(String deferido) {
+        this.deferido = deferido;
+    }
+
     public void setParecer(String parecer) {
         this.parecer = parecer;
     }
 
-    public boolean isDeferido() {
+    public String getDeferido() {
         return deferido;
-    }
-
-    public void setDeferido(boolean deferido) {
-        this.deferido = deferido;
     }
 
     public String getTipo() {
