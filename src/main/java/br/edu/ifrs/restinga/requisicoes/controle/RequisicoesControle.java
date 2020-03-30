@@ -124,9 +124,9 @@ public class RequisicoesControle {
     public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
         requisicao.setDataRequisicao(horaSistema());
         requisicao.setDeferido("EM ANÁLISE");
+        System.out.println(requisicao.getTipo());
         validaRequisicao(requisicao);
         Requisicao novaRequisicao = rDao.save(requisicao);
-        System.out.println(novaRequisicao);
         if (novaRequisicao != null) {
             return new ResponseEntity<>(novaRequisicao, HttpStatus.CREATED);
         }

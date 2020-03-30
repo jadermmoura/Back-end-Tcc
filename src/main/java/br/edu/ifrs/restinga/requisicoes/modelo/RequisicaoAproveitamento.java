@@ -14,6 +14,10 @@ public class RequisicaoAproveitamento extends Requisicao{
     private  String disciplinasCursadasAnterior;
     private  String analiseProfessor;
 
+    @Override
+    public String getTipo() {
+        return tipo;
+    }
     public String getDisciplinasCursadasAnterior() {
         return disciplinasCursadasAnterior;
     }

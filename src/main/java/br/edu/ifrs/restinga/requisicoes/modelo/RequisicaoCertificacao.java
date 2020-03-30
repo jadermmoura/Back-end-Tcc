@@ -15,7 +15,10 @@ public class RequisicaoCertificacao extends Requisicao{
     private String formacaoAtividadeAnterior;
     private String criterioAvaliacao;
 
-    
+    @Override
+    public String getTipo() {
+        return tipo;
+    }
     
     public String getFormacaoAtividadeAnterior() {
         return formacaoAtividadeAnterior;
