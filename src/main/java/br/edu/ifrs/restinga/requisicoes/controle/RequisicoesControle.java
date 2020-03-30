@@ -123,7 +123,7 @@ public class RequisicoesControle {
     @PostMapping(path = "/")
     public ResponseEntity<Requisicao> insere(@RequestBody Requisicao requisicao) {
         requisicao.setDataRequisicao(horaSistema());
-        requisicao.setDeferido("Em análise");
+        requisicao.setDeferido("EM ANÁLISE");
         validaRequisicao(requisicao);
         Requisicao novaRequisicao = rDao.save(requisicao);
         System.out.println(novaRequisicao);
@@ -138,8 +138,12 @@ public class RequisicoesControle {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Requisicao> editarRequisicao(@RequestBody Requisicao novaRequisicao, @PathVariable long id) {
         Requisicao requi = (Requisicao) this.listarRequisicao(id).getBody();
+        if(novaRequisicao.getDeferido() != null){
         requi.setDeferido(novaRequisicao.getDeferido());
+        }
+        if (novaRequisicao.getParecer() != null) {
         requi.setParecer(novaRequisicao.getParecer());
+        }
          return new ResponseEntity<>(rDao.save(requi), HttpStatus.OK);
     }
     @GetMapping(path = "/requisicaoPorPeriodo/")
@@ -231,13 +235,25 @@ public class RequisicoesControle {
         }
     }
 
-    @RequestMapping(path = "/nome/{nome}", method = RequestMethod.GET)
+    @RequestMapping(path = "/nomedisciplina/{nome}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Requisicao> buscarNomeDisciplina(@PathVariable("nome") String nome) {
         Iterable<Requisicao> listaRequisicao = rDao.findAll();
         List nova = new ArrayList();
         for (Requisicao requisicao : listaRequisicao) {
-            if (requisicao.getDisciplinaSolicitada().getNome().equals(nome)) {
+            if (requisicao.getDisciplinaSolicitada().getNome().equalsIgnoreCase(nome)) {
+                nova.add(requisicao);
+            }
+        }
+        return nova;
+    }
+  @RequestMapping(path = "/solicitante/{nome}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Requisicao> buscarNomeSolicitante(@PathVariable("nome") String nome) {
+        Iterable<Requisicao> listaRequisicao = rDao.findAll();
+        List nova = new ArrayList();
+        for (Requisicao requisicao : listaRequisicao) {
+            if ( requisicao.getUsuario().getNome().equalsIgnoreCase(nome)) {
                 nova.add(requisicao);
             }
         }

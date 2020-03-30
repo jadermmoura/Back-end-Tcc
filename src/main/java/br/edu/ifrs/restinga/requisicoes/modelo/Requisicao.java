@@ -77,7 +77,16 @@ public abstract class Requisicao implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = false)
     private List<Anexo> anexos;    
+
+    public Requisicao(String parecer, String deferido) {
+        this.parecer = parecer;
+        this.deferido = deferido;
+    }
+
+    public Requisicao() {
+    }
   
+    
     public Long getId() {
         return id;
     }

@@ -15,6 +15,8 @@ public class RequisicaoCertificacao extends Requisicao{
     private String formacaoAtividadeAnterior;
     private String criterioAvaliacao;
 
+    
+    
     public String getFormacaoAtividadeAnterior() {
         return formacaoAtividadeAnterior;
     }
