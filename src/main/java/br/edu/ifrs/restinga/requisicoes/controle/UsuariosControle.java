@@ -43,10 +43,10 @@ public class UsuariosControle {
 
     @Autowired
     UsuarioDAO usuarioDAO;
-    
+
     @Autowired
     AlunoDAO alunoDAO;
-    
+
     private void validaUsuario(Usuario u) {
 
         if (u.getEmail() == null || u.getEmail().isEmpty()) {
@@ -83,26 +83,25 @@ public class UsuariosControle {
             }
         }
     }
-     @RequestMapping(path = "/alunos/", method = RequestMethod.GET)
+
+    @RequestMapping(path = "/alunos/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Aluno> listarAlunos() {
         return alunoDAO.findAll();
     }
- 
-public class SecurityController {
- 
-    @RequestMapping(path = "/username", method = RequestMethod.GET)
-    @ResponseBody
-    public String currentUserName(Principal principal) {
-        return principal.getName();
-    
+
+    public class SecurityController {
+
+        @RequestMapping(path = "/username", method = RequestMethod.GET)
+        @ResponseBody
+        public String currentUserName(Principal principal) {
+            return principal.getName();
+
+        }
     }
-}
 ///////////// LISTAR USUÁRIOS ////////////////////////       
-
-
-
     // @PreAuthorize("hasAuthority('ensino')")
+
     @RequestMapping(path = "/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Iterable<Usuario> listar() {
@@ -118,13 +117,16 @@ public class SecurityController {
     public Usuario inserirEnsinoProfessor(@RequestBody Usuario usuario) {
         usuario.setSenha(PASSWORD_ENCODER.encode(usuario.getNovaSenha()));
         Usuario usuarioBanco = usuarioDAO.findByLogin(usuario.getLogin());
-        usuario.setPermissoes("servidor");
-        
         validaUsuario(usuario);
+        if (usuario instanceof Servidor) {
+            usuario.setPermissoes("servidor");
+        } else {
+            usuario.setPermissoes("professor");
+        }
         if (usuarioBanco != null) {
             throw new RequisicaoInvalida("este login ja existe");
         } else {
-        return usuarioDAO.save(usuario);
+            return usuarioDAO.save(usuario);
         }
     }
 
@@ -210,9 +212,15 @@ public class SecurityController {
         throw new Proibido(" não e permitido alterar dados de outros usuarios");
     }
 
+    @RequestMapping(path = "/pesquisar/login/{login}", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Usuario buscarLogin(@PathVariable("login") String login) {
+        return usuarioDAO.findByLogin(login);
+    }
+
     @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public List<Usuario> apagar(@AuthenticationPrincipal MeuUser usuarioAutenticado,@PathVariable long id) {
+    public List<Usuario> apagar(@AuthenticationPrincipal MeuUser usuarioAutenticado, @PathVariable long id) {
         if (usuarioAutenticado.getUsuario().getPermissoes().contains("ensino")) {
             if (usuarioDAO.existsById(id)) {
                 usuarioDAO.deleteById(id);
@@ -224,6 +232,7 @@ public class SecurityController {
         throw new Proibido("não e permitido apagar outros usuários");
 
     }
+
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<Usuario> loginToken(@RequestBody Login login) throws UnsupportedEncodingException {
         Usuario usuarioBanco = usuarioDAO.findByLogin(login.getUsuario());
@@ -240,7 +249,7 @@ public class SecurityController {
                         withExpiresAt(expira).
                         sign(algorithm);
                 usuarioBanco.setToken(token);
-                return new ResponseEntity<>( usuarioBanco, HttpStatus.OK);
+                return new ResponseEntity<>(usuarioBanco, HttpStatus.OK);
             }
         }
         throw new NaoEncontrado("Usuário e/ou senha incorreto(s)");
